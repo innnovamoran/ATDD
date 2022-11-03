@@ -1,0 +1,1 @@
+*/15    *       *       *       *       curl http://127.0.0.1/api/v1/testcront -H "Authorization: Bearer your_token"

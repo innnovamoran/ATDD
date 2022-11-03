@@ -1,0 +1,13 @@
+node_modules
+coverage
+file
+package-lock.json
+.env
+./build
+./dist
+bundle
+src/.DS_Store
+
+src/Dependencies/.DS_Store
+
+.DS_Store
