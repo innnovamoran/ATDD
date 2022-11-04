@@ -4,6 +4,7 @@ import { graphqlHTTP } from "express-graphql";
 import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
 import helmet from "helmet";
+import HandleDataBase from "./Config/DataSource";
 
 export default class ServerExpress {
   port: Number;
@@ -37,6 +38,7 @@ export default class ServerExpress {
 
   start_server(callback: () => void) {
     this.useGraphql();
+    new HandleDataBase().initDB();
     this.app.listen(this.port, callback);
   }
 }
