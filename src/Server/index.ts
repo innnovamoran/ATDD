@@ -5,9 +5,10 @@ import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
 import helmet from "helmet";
 import HandleDataBase from "./Config/DataSource";
+import { PayloadGenerateToken } from "../Services/Auth";
 
 export interface ContextLET extends Request {
-  inspection?: string;
+  inspection?: PayloadGenerateToken;
 }
 
 export default class ServerExpress {
@@ -23,11 +24,6 @@ export default class ServerExpress {
   }
 
   async useGraphql() {
-    this.app.use((req: ContextLET, res, next) => {
-      req.inspection = req.headers.authorization?.replace("Bearer", "").trim();
-      next();
-    });
-
     this.app.use(
       "/graphql",
       graphqlHTTP({
