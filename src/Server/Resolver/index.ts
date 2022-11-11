@@ -1,8 +1,8 @@
 import { NonEmptyArray } from "type-graphql";
 import { Onboarding } from "./Onboarding";
-import { Signin } from "./Signin";
+import { Inspection } from "./Inspection";
 
 export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Onboarding,
-  Signin,
+  Inspection,
 ];

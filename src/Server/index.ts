@@ -1,10 +1,14 @@
 import "reflect-metadata";
 import express, { Express, Request, Response } from "express";
-import { graphqlHTTP } from "express-graphql";
+import { graphqlHTTP, getGraphQLParams } from "express-graphql";
 import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
 import helmet from "helmet";
 import HandleDataBase from "./Config/DataSource";
+
+export interface ContextLET extends Request {
+  inspection?: string;
+}
 
 export default class ServerExpress {
   port: Number;
@@ -19,16 +23,17 @@ export default class ServerExpress {
   }
 
   async useGraphql() {
+    this.app.use((req: ContextLET, res, next) => {
+      req.inspection = req.headers.authorization?.replace("Bearer", "").trim();
+      next();
+    });
+
     this.app.use(
       "/graphql",
       graphqlHTTP({
         schema: await buildSchema({
           resolvers: Resolvers,
           validate: { always: true },
-        }),
-        context: ({ req, res }: { req: Request; res: Response }) => ({
-          req,
-          res,
         }),
         graphiql: process.env.NODE_ENV === "develop",
       })
