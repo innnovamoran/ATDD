@@ -14,7 +14,6 @@ export const handleFormatMonthAndYearMobile = (
 
 export const CreateDate = (date: string | number | Date) => {
   const cDate = new Date(date);
-  cDate.setHours(0, 0, 0, 0);
   return cDate;
 };
 

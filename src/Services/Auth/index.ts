@@ -1,10 +1,10 @@
 import jwt, { VerifyErrors } from "jsonwebtoken";
 
 export type PayloadGenerateToken = {
-  ID_INSPECTION: number;
-  TIME_DURATION: number;
-  START_DATE: Date;
-  END_DATE: Date;
+  ID_INSPECTION: Number;
+  TIME_INSPECTION: Number;
+  START_DATE: Number;
+  END_DATE: Number;
 };
 
 const factoryErrors = () => ({

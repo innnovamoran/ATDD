@@ -4,6 +4,10 @@ import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArg
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
 import { Inspection as InspectionSchema } from "../../../Core/Schemas/Inspection";
 
+import { CreateDate } from "../../../Dependencies/useDate";
+
+import { GenerateToken } from "../../../Services/Auth";
+
 import ORM from "../../Config/DataSource";
 const db_instance = new ORM();
 
@@ -52,12 +56,26 @@ export class Inspection {
 
   @Mutation((returns) => String, {
     name: "StartInspection",
-    description: "Mutación que permite el inicio del tiempo de la inspección",
+    description: "Mutación que entrega JWT asociado a la inspección en curso",
   })
   async StartInspection(
     @Args()
     { ID_INSPECTION, TIME_INSPECTION }: startInspectionArgs
   ) {
-    return "Hola";
+    const START_DATE = CreateDate(new Date(Date.now()));
+
+    const END_DATE = CreateDate(
+      new Date(Date.now()).getTime() + Number(TIME_INSPECTION)
+    );
+
+    return await GenerateToken(
+      {
+        ID_INSPECTION,
+        TIME_INSPECTION,
+        START_DATE: START_DATE.getTime(),
+        END_DATE: END_DATE.getTime(),
+      },
+      Number(TIME_INSPECTION) / 1000
+    );
   }
 }
