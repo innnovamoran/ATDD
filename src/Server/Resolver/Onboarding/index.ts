@@ -2,7 +2,7 @@ import { Arg, Query, Resolver } from "type-graphql";
 import {
   StructureCarousel,
   Onboarding as OnboardingSchema,
-} from "../../../Core/Schemas/StructureCarousel";
+} from "../../../Core/Schemas/Onboarding";
 
 import ORM from "../../../Server/Config/DataSource";
 const db_instance = new ORM();

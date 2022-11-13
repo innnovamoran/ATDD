@@ -1,7 +1,7 @@
 import { ArgsType, Field } from "type-graphql";
 
 @ArgsType()
-export class SigninArgs {
+export class getInspectionArgs {
   @Field((type) => String, {
     nullable: false,
     description: "Rut de inspección",
