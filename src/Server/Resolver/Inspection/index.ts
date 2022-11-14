@@ -14,11 +14,11 @@ const db_instance = new ORM();
 @Resolver()
 export class Inspection {
   @Query((returns) => InspectionSchema, {
-    name: "GetInspectionByUser",
+    name: "Inspection",
     description:
       "Query que nos entrega la información de la inspección a realizar mediante RUT y PATENTE",
   })
-  async GetInspectionByUser(
+  async Inspection(
     @Args()
     {
       APPNAME,

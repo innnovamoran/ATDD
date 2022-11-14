@@ -1,4 +1,4 @@
-import { Arg, Query, Resolver } from "type-graphql";
+import { Query, Resolver } from "type-graphql";
 import {
   StructureCarousel,
   Onboarding as OnboardingSchema,

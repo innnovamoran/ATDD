@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 
-@ObjectType({ description: "Timer de inspección" })
+@ObjectType({ description: "Tiempo de inspección" })
 export class TimerInspection {
   @Field((type) => Number, {
     description: "Minutos de inspección",
