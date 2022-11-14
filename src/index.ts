@@ -1,15 +1,13 @@
 import "reflect-metadata";
+
 import dotenv from "dotenv";
 dotenv.config();
-/** library */
+
 import morgan from "morgan";
 import cors from "cors";
 
-/** class server */
 import ServerExpress from "./Server/index";
-/** app files */
-
-const { LOG_ERROR } = require("./Core/Schemas/HandleLogError");
+import { LOG_ERROR } from "./Core/Schemas/HandleLogError";
 
 if (!process.env.PORT) {
   process.exit(1);

@@ -1,10 +1,15 @@
 import "reflect-metadata";
 import express, { Express, Request, Response } from "express";
-import { graphqlHTTP } from "express-graphql";
+import { graphqlHTTP, getGraphQLParams } from "express-graphql";
 import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
 import helmet from "helmet";
 import HandleDataBase from "./Config/DataSource";
+import { PayloadGenerateToken } from "../Services/Auth";
+
+export interface ContextLET extends Request {
+  inspection?: PayloadGenerateToken;
+}
 
 export default class ServerExpress {
   port: Number;
@@ -25,10 +30,6 @@ export default class ServerExpress {
         schema: await buildSchema({
           resolvers: Resolvers,
           validate: { always: true },
-        }),
-        context: ({ req, res }: { req: Request; res: Response }) => ({
-          req,
-          res,
         }),
         graphiql: process.env.NODE_ENV === "develop",
       })

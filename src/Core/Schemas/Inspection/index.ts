@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
 
 @ObjectType({ description: "Obtener inspección a realizar" })
-export class Signin {
+export class Inspection {
   @Field((type) => Number, {
     description: "Identificador único de inspección",
     nullable: true,

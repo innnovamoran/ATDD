@@ -94,6 +94,3 @@ export const PostMultiPart = async (
     console.log(error);
   }
 };
-
-export const GetURLProfileFS = (rut: string) =>
-  `https://www.clubhipico.cl/carreras/perfil-fina-sangre/?fs_rut=${rut}`;

@@ -39,7 +39,7 @@ export class StructureCarousel {
   btn_color!: String;
 }
 
-@ObjectType({ description: "Onboarding" })
+@ObjectType({ description: "Pantalla de onboarding" })
 export class Onboarding {
   @Field((type) => String, {
     description: "Titulo cabecera de onboarding",

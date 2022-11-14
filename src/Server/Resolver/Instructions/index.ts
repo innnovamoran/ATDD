@@ -1,10 +1,6 @@
 import { Args, Query, Resolver } from "type-graphql";
 import { InstructionsSchema } from "../../../Core/Schemas/Instructions";
-import { InstructionsArg } from "../../../Core/Schemas/InstructionsArgs";
-import {
-  StructureCarousel,
-  Onboarding as OnboardingSchema,
-} from "../../../Core/Schemas/StructureCarousel";
+import { InstructionsArg } from "../../../Core/Schemas/Inputs/InstructionsArgs";
 
 import ORM from "../../../Server/Config/DataSource";
 const db_instance = new ORM();
@@ -14,9 +10,7 @@ export class Instructions {
   @Query((returns) => [InstructionsSchema], { name: "Instructions" })
   async Instructions(
     @Args()
-    {
-      ID_INSPECCION,
-    }: InstructionsArg
+    { ID_INSPECCION }: InstructionsArg
   ) {
     const response = await db_instance.connection.query(
       `EXEC PA_INSTRUCTIONS_APP_AI :ID_INSPECCION`,
@@ -26,7 +20,6 @@ export class Instructions {
         },
       }
     );
-    console.log("response", response[0]);
     return response[0];
   }
 }
