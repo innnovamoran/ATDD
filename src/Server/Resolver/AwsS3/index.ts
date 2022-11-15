@@ -1,8 +1,16 @@
-import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
+import {
+  Arg,
+  Resolver,
+  Mutation,
+  Ctx,
+  Query,
+  UseMiddleware,
+} from "type-graphql";
 
 import { uploadFileToBucket, getFileStream } from "../../../Dependencies/Aws";
 
 import { ContextLET } from "../..";
+import { ValidatorFile } from "../../Middleware/ValidatorFile";
 
 type FileUpload = {
   fieldname: string;
@@ -15,6 +23,7 @@ type FileUpload = {
 
 @Resolver()
 export class AwsS3 {
+  @UseMiddleware(ValidatorFile)
   @Mutation((returns) => String, {
     name: "UploadPhoto",
     description: "Mutación que permite la subida de archivos a S3",
@@ -39,7 +48,7 @@ export class AwsS3 {
     description: "Query que obtiene base64 de archivo de S3",
   })
   async GetBaseFile(@Arg("fileName") fileName: String): Promise<String> {
-    if (!fileName) {
+    if (!fileName || fileName.length === 0) {
       throw new Error("Nombre de archivo es requerido");
     }
     return await getFileStream(`${fileName}`);

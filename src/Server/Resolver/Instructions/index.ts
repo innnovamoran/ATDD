@@ -1,22 +1,21 @@
-import { Args, Query, Resolver } from "type-graphql";
+import { Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
 import { InstructionsSchema } from "../../../Core/Schemas/Instructions";
-import { InstructionsArg } from "../../../Core/Schemas/Inputs/InstructionsArgs";
+import { ContextLET } from "../..";
+import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
 import ORM from "../../../Server/Config/DataSource";
 const db_instance = new ORM();
 
 @Resolver()
 export class Instructions {
+  @UseMiddleware(InspectionAccess)
   @Query((returns) => [InstructionsSchema], { name: "Instructions" })
-  async Instructions(
-    @Args()
-    { ID_INSPECCION }: InstructionsArg
-  ) {
+  async Instructions(@Ctx() ctx: ContextLET) {
     const response = await db_instance.connection.query(
       `EXEC PA_INSTRUCTIONS_APP_AI :ID_INSPECCION`,
       {
         replacements: {
-          ID_INSPECCION,
+          ID_INSPECCION: ctx.inspection?.ID_INSPECTION,
         },
       }
     );
