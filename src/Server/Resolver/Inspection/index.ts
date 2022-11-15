@@ -3,16 +3,60 @@ import { Args, Query, Resolver, Mutation } from "type-graphql";
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
 import { Inspection as InspectionSchema } from "../../../Core/Schemas/Inspection";
+import { Theme as ThemeSchema } from "../../../Core/Schemas/Theme";
 
 import { CreateDate } from "../../../Dependencies/useDate";
 
 import { GenerateToken } from "../../../Services/Auth";
+import { ValidateResponseSP } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
 const db_instance = new ORM();
 
 @Resolver()
 export class Inspection {
+  CALL_PA_LOGIN_AI_V2<T>({
+    APPNAME,
+    APPVERSION,
+    INTERNET_PROVIDER,
+    PATENTE,
+    PHONE_BRAND,
+    PHONE_MODEL,
+    PHONE_SO,
+    PLATAFORM,
+    RUT,
+    TOKEN_FIREBASE,
+  }: getInspectionArgs): Promise<Array<Array<T>>> {
+    return db_instance.connection.query(
+      `EXEC PA_LOGIN_AI_V2 :RUT,:PATENTE,:PHONE_MODEL,:PHONE_BRAND,:PHONE_SO,:INTERNET_PROVIDER,:TOKEN_FIREBASE,:APPNAME,:APPVERSION,:PLATAFORM`,
+      {
+        replacements: {
+          RUT,
+          PATENTE,
+          PHONE_MODEL,
+          PHONE_BRAND,
+          PHONE_SO,
+          INTERNET_PROVIDER,
+          TOKEN_FIREBASE,
+          APPNAME,
+          APPVERSION,
+          PLATAFORM,
+        },
+      }
+    ) as any; // any aun por no tipar de forma correcta la respuesta de query
+  }
+
+  CALL_PA_THEME<T>({
+    ID_INSPECCION,
+  }: {
+    ID_INSPECCION: Number;
+  }): Promise<Array<Array<T>>> {
+    return db_instance.connection.query("EXEC PA_THEME_APP_AI :ID_INSPECCION", {
+      replacements: {
+        ID_INSPECCION,
+      },
+    }) as any;
+  }
   @Query((returns) => InspectionSchema, {
     name: "Inspection",
     description:
@@ -33,25 +77,25 @@ export class Inspection {
       TOKEN_FIREBASE,
     }: getInspectionArgs
   ) {
-    const response = await db_instance.connection.query(
-      `EXEC PA_LOGIN_AI_V2 :RUT,:PATENTE,:PHONE_MODEL,:PHONE_BRAND,:PHONE_SO,:INTERNET_PROVIDER,:TOKEN_FIREBASE,:APPNAME,:APPVERSION,:PLATAFORM`,
-      {
-        replacements: {
-          RUT,
-          PATENTE,
-          PHONE_MODEL,
-          PHONE_BRAND,
-          PHONE_SO,
-          INTERNET_PROVIDER,
-          TOKEN_FIREBASE,
-          APPNAME,
-          APPVERSION,
-          PLATAFORM,
-        },
-      }
+    const inspection = ValidateResponseSP<InspectionSchema>(
+      await this.CALL_PA_LOGIN_AI_V2({
+        APPNAME,
+        APPVERSION,
+        INTERNET_PROVIDER,
+        PATENTE,
+        PHONE_BRAND,
+        PHONE_MODEL,
+        PHONE_SO,
+        PLATAFORM,
+        RUT,
+        TOKEN_FIREBASE,
+      })
     );
-    // pondiente de optimización para uso de matriz.
-    return response[0][0];
+
+    const theme = ValidateResponseSP<ThemeSchema>(
+      await this.CALL_PA_THEME({ ID_INSPECCION: inspection.id })
+    );
+    return { ...inspection, theme };
   }
 
   @Mutation((returns) => String, {
