@@ -57,7 +57,7 @@ export class Inspection {
       },
     }) as any;
   }
-  async CALL_PA_TEXT_LOGIN_APP_AI<T>(): Promise<Array<Array<T>>> {
+  CALL_PA_TEXT_LOGIN_APP_AI<T>(): Promise<Array<Array<T>>> {
     return db_instance.connection.query("PA_TEXT_LOGIN_APP_AI") as any;
   }
 
