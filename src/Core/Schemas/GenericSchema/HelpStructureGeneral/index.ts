@@ -1,31 +1,33 @@
 import { ObjectType, Field } from "type-graphql";
 import { ButtonGeneral } from "../ButtonGeneral";
 
-@ObjectType({ description: "Estructura de salida pantalla caracteristicas generales" })
-export class HelpGeneralCharacteristic {
+@ObjectType({
+  description: "Estructura de salida pantalla caracteristicas generales",
+})
+export class HelpStructureGeneral {
   @Field((type) => String, {
     nullable: true,
-    description: "Título"
+    description: "Título",
   })
   title!: String;
   @Field((type) => String, {
     nullable: true,
-    description: "Descripción"
+    description: "Descripción",
   })
   description!: String;
   @Field((type) => String, {
     nullable: true,
-    description: "Html"
+    description: "Html",
   })
   html!: String;
   @Field((type) => ButtonGeneral, {
     nullable: true,
-    description: "Botón llamada"
+    description: "Botón whatsapp",
   })
-  button_call!: ButtonGeneral;
+  button_whatsapp!: ButtonGeneral;
   @Field((type) => ButtonGeneral, {
     nullable: true,
-    description: "Botón Whatsapp"
-  })  
-  button_whatsapp!: ButtonGeneral;
+    description: "Botón llamada",
+  })
+  button_call!: ButtonGeneral;
 }

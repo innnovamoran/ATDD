@@ -7,6 +7,16 @@ import helmet from "helmet";
 import HandleDataBase from "./Config/DataSource";
 import { PayloadGenerateToken } from "../Services/Auth";
 
+import multer from "multer";
+import HandleAws from "./Config/Aws";
+const upload = multer();
+
+export interface UploadFile {
+  filename: string;
+  mimetype: string;
+  encoding: string;
+  //  createReadStream:()=>Stream;
+}
 export interface ContextLET extends Request {
   inspection?: PayloadGenerateToken;
 }
@@ -26,6 +36,7 @@ export default class ServerExpress {
   async useGraphql() {
     this.app.use(
       "/graphql",
+      upload.single("photo"),
       graphqlHTTP({
         schema: await buildSchema({
           resolvers: Resolvers,
@@ -34,12 +45,14 @@ export default class ServerExpress {
         graphiql: process.env.NODE_ENV === "develop",
       })
     );
+
     this.app.use(helmet());
   }
 
   start_server(callback: () => void) {
     this.useGraphql();
     new HandleDataBase().initDB();
+    new HandleAws().s3ClientAws();
     this.app.listen(this.port, callback);
   }
 }

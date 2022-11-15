@@ -47,26 +47,6 @@ const getMimeTypes = (Key: string): string => {
   }
 };
 
-const getCountFilesFromBucket = async (
-  nameFile: string
-): Promise<number | undefined> => {
-  try {
-    const bucketParams = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Prefix: `HLSReady/${nameFile}`,
-    };
-    const data = await s3ClientAws.awsAdmin.send(
-      new ListObjectsCommand(bucketParams)
-    );
-    return data.Contents?.length;
-  } catch (error: any) {
-    LOG_ERROR({
-      function_name: "[getCountFilesFromBucket]",
-      message: error.message,
-    });
-  }
-};
-
 type ParamsUploadFileToBucket = {
   name: string;
   buffer: Buffer | undefined;
@@ -77,30 +57,35 @@ const uploadFileToBucket = async ({
   buffer,
   ContentType,
 }: ParamsUploadFileToBucket): Promise<string | undefined> => {
-  const FileName = process.env.AWS_FOLDER
-    ? process.env.AWS_FOLDER + "/" + name
-    : "";
+  const folder =
+    process.env.NODE_ENV === "develop"
+      ? process.env.AWS_FOLDER_DEV
+      : process.env.AWS_FOLDER_PROD;
+
+  const FileName = folder + "/" + name;
+  const Bucket = process.env.AWS_BUCKET_ASSETS;
+
   const upload = await s3ClientAws.awsAdmin.send(
     new UploadPartCommand({
-      Bucket: process.env.AWS_BUCKET_ASSETS,
+      Bucket,
       Key: FileName,
       Body: buffer,
       PartNumber: undefined,
       UploadId: undefined,
     })
   );
+
   const resource = await s3ClientAws.awsAdmin.send(
     new ListObjectsCommand({
-      Bucket: process.env.AWS_BUCKET_ASSET ? process.env.AWS_BUCKET_ASSET : "",
+      Bucket,
     })
   );
 
   const file = resource.Contents?.find((e) => e.ETag === upload.ETag);
-
   return file?.Key;
 };
 
-const getFileStream = (Key: string) => {
+const getFileStream = (Key: string): Promise<String> => {
   return new Promise(async (res, rej) => {
     try {
       const resource = await s3ClientAws.awsAdmin.send(
@@ -126,20 +111,17 @@ const getFileStream = (Key: string) => {
           );
           res(getMimeTypes(Key) + buf.toString("base64"));
         });
+      } else {
+        throw new Error("Error en obtener archivo");
       }
     } catch (error: any) {
       LOG_ERROR({
         function_name: "[getFileStream]",
         message: error.message,
       });
-      return rej(error);
+      rej(error);
     }
   });
 };
 
-export {
-  getBucketParams,
-  getCountFilesFromBucket,
-  uploadFileToBucket,
-  getFileStream,
-};
+export { getBucketParams, uploadFileToBucket, getFileStream };

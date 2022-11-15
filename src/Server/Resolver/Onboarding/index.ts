@@ -1,40 +1,31 @@
-import { Arg, Query, Resolver } from "type-graphql";
+import { Query, Resolver } from "type-graphql";
 import {
   StructureCarousel,
   Onboarding as OnboardingSchema,
-} from "../../../Core/Schemas/Onboarding";
+} from "../../../Core/Schemas/Screen/Onboarding";
 
 import ORM from "../../../Server/Config/DataSource";
+import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
+
 const db_instance = new ORM();
 
 @Resolver()
 export class Onboarding {
-  spHeadOnboarding = async (): Promise<{
-    title: string;
-    description: string;
-    firstActive: string;
-  }> => {
-    const response = await db_instance.connection.query("PA_WELCOME_CAROUSEL");
-    return response[0][0] as {
-      title: string;
-      description: string;
-      firstActive: string;
-    };
-  };
+  async CALL_PA_WELCOME_CAROUSEL<T>(): Promise<Array<Array<T>>> {
+    return db_instance.connection.query("PA_WELCOME_CAROUSEL") as any;
+  }
 
-  spStructureOnboardingasync = async (): Promise<StructureCarousel[]> => {
-    const response = await db_instance.connection.query(
-      "PA_STRUCTURE_CAROUSEL"
-    );
-    return response[0] as StructureCarousel[];
-  };
+  async CALL_PA_STRUCTURE_CAROUSEL<T>(): Promise<Array<Array<T>>> {
+    return db_instance.connection.query("PA_STRUCTURE_CAROUSEL") as any;
+  }
 
   @Query((returns) => OnboardingSchema, { name: "Onboarding" })
   async Onboarding() {
-    const [head, body] = await Promise.all([
-      this.spHeadOnboarding(),
-      this.spStructureOnboardingasync(),
-    ]);
-    return { ...head, structure: body } as OnboardingSchema;
+    return {
+      ...ResponseSP2D<OnboardingSchema>(await this.CALL_PA_WELCOME_CAROUSEL()),
+      structure: ResponseSP<StructureCarousel>(
+        await this.CALL_PA_STRUCTURE_CAROUSEL<StructureCarousel>()
+      ),
+    } as OnboardingSchema;
   }
 }

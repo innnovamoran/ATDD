@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
+import { Theme } from "../../Theme";
 
 @ObjectType({ description: "Obtener inspección a realizar" })
 export class Inspection {
@@ -117,4 +118,9 @@ export class Inspection {
     nullable: true,
   })
   active!: Number;
+  @Field((type) => Theme, {
+    nullable: true,
+    description: "Tema de inspección por ID",
+  })
+  theme!: Theme;
 }
