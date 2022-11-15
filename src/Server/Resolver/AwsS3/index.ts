@@ -11,6 +11,7 @@ import { uploadFileToBucket, getFileStream } from "../../../Dependencies/Aws";
 
 import { ContextLET } from "../..";
 import { ValidatorFile } from "../../Middleware/ValidatorFile";
+import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
 type FileUpload = {
   fieldname: string;
@@ -23,6 +24,7 @@ type FileUpload = {
 
 @Resolver()
 export class AwsS3 {
+  @UseMiddleware(InspectionAccess)
   @UseMiddleware(ValidatorFile)
   @Mutation((returns) => String, {
     name: "UploadPhoto",
@@ -31,10 +33,13 @@ export class AwsS3 {
   async UploadPhoto(@Ctx() ctx: ContextLET): Promise<String> {
     // console.log(ctx.file);
     const { originalname, buffer, mimetype } = ctx.file as FileUpload;
+    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
+      throw new Error("Token incorrecto");
+    }
     const isUpload = await uploadFileToBucket({
-      ContentType: mimetype,
       name: Date.now() + "_assets." + originalname.split(".")[1],
       buffer: buffer,
+      ID_INSPECTION: Number(ctx.inspection?.ID_INSPECTION),
     });
 
     if (typeof isUpload === "undefined") {

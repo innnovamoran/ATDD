@@ -10,34 +10,6 @@ const s3ClientAws = new HandleAws();
 import { LOG_ERROR } from "../../Core/Schemas/HandleLogError";
 import { Readable } from "stream";
 
-type BucketParams = {
-  name: string;
-  buffer: Buffer;
-  ContentType: string;
-  config: string;
-};
-type BuckerResolve = {
-  Bucket: string | undefined;
-  Key: string;
-  Body: Buffer | undefined;
-  ContentType: string;
-};
-const getBucketParams = ({
-  name,
-  buffer,
-  ContentType,
-  config,
-}: BucketParams): BuckerResolve | undefined => {
-  if (config === "Assets") {
-    return {
-      Bucket: process.env.AWS_BUCKET_ASSETS,
-      Key: process.env.AWS_FOLDER + "/" + name,
-      Body: buffer,
-      ContentType,
-    };
-  }
-};
-
 const getMimeTypes = (Key: string): string => {
   const type = Key.split(".")[1];
   if (type === "svg") {
@@ -50,20 +22,24 @@ const getMimeTypes = (Key: string): string => {
 type ParamsUploadFileToBucket = {
   name: string;
   buffer: Buffer | undefined;
-  ContentType: string;
+  ID_INSPECTION: number;
 };
 const uploadFileToBucket = async ({
   name,
   buffer,
-  ContentType,
+  ID_INSPECTION,
 }: ParamsUploadFileToBucket): Promise<string | undefined> => {
   const folder =
     process.env.NODE_ENV === "develop"
-      ? process.env.AWS_FOLDER_DEV
-      : process.env.AWS_FOLDER_PROD;
+      ? process.env.AWS_FOLDER_DEV + "/i" + ID_INSPECTION
+      : "i" + ID_INSPECTION;
 
   const FileName = folder + "/" + name;
-  const Bucket = process.env.AWS_BUCKET_ASSETS;
+
+  const Bucket =
+    process.env.NODE_ENV === "develop"
+      ? process.env.AWS_BUCKET_ASSETS_DEV
+      : process.env.AWS_BUCKET_ASSETS_PROD;
 
   const upload = await s3ClientAws.awsAdmin.send(
     new UploadPartCommand({
@@ -88,9 +64,14 @@ const uploadFileToBucket = async ({
 const getFileStream = (Key: string): Promise<String> => {
   return new Promise(async (res, rej) => {
     try {
+      const Bucket =
+        process.env.NODE_ENV === "develop"
+          ? process.env.AWS_BUCKET_ASSETS_DEV
+          : process.env.AWS_BUCKET_ASSETS_PROD;
+
       const resource = await s3ClientAws.awsAdmin.send(
         new GetObjectCommand({
-          Bucket: process.env.AWS_BUCKET_ASSETS,
+          Bucket,
           Key,
         })
       );
@@ -124,4 +105,4 @@ const getFileStream = (Key: string): Promise<String> => {
   });
 };
 
-export { getBucketParams, uploadFileToBucket, getFileStream };
+export { uploadFileToBucket, getFileStream };

@@ -16,11 +16,21 @@ export default class HandleAws {
 
   s3ClientAws() {
     try {
+      const accessKeyId =
+        process.env.NODE_ENV === "develop"
+          ? (process.env.AWS_ACCESS_KEY_ID_DEV as string)
+          : (process.env.AWS_ACCESS_KEY_ID_PROD as string);
+
+      const secretAccessKey =
+        process.env.NODE_ENV === "develop"
+          ? (process.env.AWS_SECRET_ACCESS_KEY_DEV as string)
+          : (process.env.AWS_SECRET_ACCESS_KEY_PROD as string);
+
       this.awsAdmin = new S3Client({
         region: REGION,
         credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+          accessKeyId,
+          secretAccessKey,
         },
       });
     } catch (error: any) {

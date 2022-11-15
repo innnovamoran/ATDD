@@ -1,5 +1,5 @@
-var acceptedMime = ["jpg", "png", "jpeg", "pdf", "mov", "mp4"];
-var limit_size = 3000000;
+var acceptedMime = ["jpg", "pdf", "mov", "mp4"];
+var limit_size = 30000000;
 
 import { MiddlewareFn } from "type-graphql";
 import { ContextLET } from "../..";
