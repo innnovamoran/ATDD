@@ -3,6 +3,7 @@ import { Args, Query, Resolver, Mutation } from "type-graphql";
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
 import { Inspection as InspectionSchema } from "../../../Core/Schemas/Inspection";
+import { Login as LoginSchema } from "../../../Core/Schemas/Login";
 import { Theme as ThemeSchema } from "../../../Core/Schemas/Theme";
 
 import { CreateDate } from "../../../Dependencies/useDate";
@@ -55,6 +56,9 @@ export class Inspection {
         ID_INSPECCION,
       },
     }) as any;
+  }
+  async CALL_PA_TEXT_LOGIN_APP_AI<T>(): Promise<Array<Array<T>>> {
+    return db_instance.connection.query("PA_TEXT_LOGIN_APP_AI") as any;
   }
 
   @Query((returns) => InspectionSchema, {
@@ -119,6 +123,17 @@ export class Inspection {
         END_DATE: END_DATE.getTime(),
       },
       Number(TIME_INSPECTION) / 1000
+    );
+  }
+
+  @Query((returns) => LoginSchema, {
+    name: "Login",
+    description:
+      "Query que obtiene la estructura para la pantalla de inicio sesión",
+  })
+  async Login() {
+    return ResponseSP2D<LoginSchema>(
+      await this.CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>()
     );
   }
 }
