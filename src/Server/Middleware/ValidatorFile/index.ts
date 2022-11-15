@@ -1,4 +1,4 @@
-var acceptedMime = ["jpg", "pdf", "mov", "mp4"];
+var acceptedMime = ["jpg", "jpeg", "pdf", "mov", "mp4"];
 var limit_size = 30000000;
 
 import { MiddlewareFn } from "type-graphql";
@@ -9,11 +9,12 @@ export const ValidatorFile: MiddlewareFn<ContextLET> = async (
 ) => {
   try {
     const file = context?.file;
+    console.log(file);
     if (typeof file === "undefined" || typeof file.mimetype === "undefined") {
       throw new Error("Archivo de subida es requerido");
     }
     if (!acceptedMime.includes(file.mimetype.split("/")[1])) {
-      throw new Error("Archivo de subida es requerido");
+      throw new Error("Formato de archivo incorrecto");
     }
     if (file.size > limit_size) {
       throw new Error("Archivo de subida superta el límite de tamaño");
