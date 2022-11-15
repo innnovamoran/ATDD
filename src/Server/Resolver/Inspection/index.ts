@@ -8,7 +8,7 @@ import { Theme as ThemeSchema } from "../../../Core/Schemas/Theme";
 import { CreateDate } from "../../../Dependencies/useDate";
 
 import { GenerateToken } from "../../../Services/Auth";
-import { ValidateResponseSP } from "../../../Services/ValidateSP";
+import { ResponseSP2D } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
 const db_instance = new ORM();
@@ -45,7 +45,6 @@ export class Inspection {
       }
     ) as any; // any aun por no tipar de forma correcta la respuesta de query
   }
-
   CALL_PA_THEME<T>({
     ID_INSPECCION,
   }: {
@@ -57,6 +56,7 @@ export class Inspection {
       },
     }) as any;
   }
+
   @Query((returns) => InspectionSchema, {
     name: "Inspection",
     description:
@@ -77,7 +77,7 @@ export class Inspection {
       TOKEN_FIREBASE,
     }: getInspectionArgs
   ) {
-    const inspection = ValidateResponseSP<InspectionSchema>(
+    const inspection = ResponseSP2D<InspectionSchema>(
       await this.CALL_PA_LOGIN_AI_V2({
         APPNAME,
         APPVERSION,
@@ -91,8 +91,7 @@ export class Inspection {
         TOKEN_FIREBASE,
       })
     );
-
-    const theme = ValidateResponseSP<ThemeSchema>(
+    const theme = ResponseSP2D<ThemeSchema>(
       await this.CALL_PA_THEME({ ID_INSPECCION: inspection.id })
     );
     return { ...inspection, theme };
