@@ -44,10 +44,9 @@ export class AwsS3 {
     LATITUE,
     LONGITUDE,
     DESCRIPTION,
-    ID_PART,
   }: PhotoArgs): Promise<Array<Array<T>>> {
     return db_instance.connection.query(
-      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION, :ID_STRUCTURE_STEP_3, :TYPE, :LATITUE, :LONGITUDE, :DESCRIPTION, :ID_PART",
+      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION, :ID_STRUCTURE_STEP_3, :TYPE, :LATITUE, :LONGITUDE, :DESCRIPTION",
       {
         replacements: {
           ID_INSPECCION,
@@ -56,7 +55,6 @@ export class AwsS3 {
           LATITUE,
           LONGITUDE,
           DESCRIPTION,
-          ID_PART,
         },
       }
     ) as any;
