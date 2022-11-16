@@ -7,6 +7,7 @@ import { AwsS3 } from "./AwsS3";
 import { Summary } from "./Summary";
 import { Feature } from "./Feature";
 import { Accesories } from "./Accesories";
+import { Photos } from "./Photos";
 
 export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Onboarding,
@@ -16,5 +17,6 @@ export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Summary,
   Feature,
   Accesories,
+  Photos,
   Test,
 ];
