@@ -1,4 +1,4 @@
-import { Arg, Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { ContextLET } from "../..";
 import { Feature as FeatureSchema } from "../../../Core/Schemas/Screen/Feature";
 import { FeatureStructure as FeatureStructureSchema } from "../../../Core/Schemas/Screen/Feature/FeatureStructure";
@@ -7,6 +7,7 @@ import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
+import { featureArgs } from "../../../Core/Schemas/Inputs/setFeaturesArgs";
 const db_instance = new ORM();
 
 @Resolver()
@@ -40,6 +41,25 @@ export class Feature {
         replacements: {
           ID_STRUCTURE_STEP_1,
           ID_INSPECCION,
+        },
+      }
+    ) as any;
+  }
+
+  CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<T>(
+    ID_INSPECCION: Number,
+    { ID_CAMPO, VALUE }: featureArgs,
+  ): Promise<Array<Array<T>>> {
+    console.log("ID_INSPECCION", ID_INSPECCION);
+    console.log("ID_CAMPO", ID_CAMPO);
+    console.log("VALUE", VALUE);
+    return db_instance.connection.query(
+      `EXEC PA_ACTUALIZA_CARACTERISTICAS_APP :ID_INSPECCION, :ID_CAMPO, :VALUE`,
+      {
+        replacements: {
+          ID_INSPECCION,
+          ID_CAMPO,
+          VALUE
         },
       }
     ) as any;
@@ -89,5 +109,38 @@ export class Feature {
         ctx.inspection.ID_INSPECTION
       )
     );
+  }
+
+  @UseMiddleware(InspectionAccess)
+  @Mutation((returns) => String, {
+    name: "UpdateFeature",
+    description: "Mutación que entrega JWT asociado a la inspección en curso",
+  })
+  async UpdateFeature(
+    //RECIBO VARIABLE feature QUE REPRESENTA ARRAY DE OBJETOS CON CLAVES "ID_CAMPO" Y "VALUE"
+    @Args() { ID_CAMPO, VALUE }: featureArgs,
+    @Ctx() ctx: ContextLET
+  ) {
+    if (
+      typeof ctx.inspection?.ID_INSPECTION === "undefined" ||
+      !ID_CAMPO || !VALUE
+    ) {
+      throw new Error("Token incorrecto");
+    }
+
+    const response = ResponseSP2D(
+      await this.CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<{ MSJ: string }>(
+        ctx.inspection?.ID_INSPECTION,
+        {
+          ID_CAMPO,
+          VALUE,
+        }
+      )
+    );
+    if (response.MSJ === "Ok") {
+      return "Actualización realizada con éxito";
+    } else {
+      throw new Error("Error al actualizar caracteristicas");
+    }
   }
 }
