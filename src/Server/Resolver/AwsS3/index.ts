@@ -31,8 +31,13 @@ type FileUpload = {
   size: number;
 };
 
+type SpGetName = {
+  MSJ: string;
+  NOMBRE_IMG: string;
+};
+
 interface factoryUpload {
-  [key: string]: (ctx: ContextLET) => Promise<string>;
+  [key: string]: (ctx: ContextLET) => Promise<SpGetName>;
 }
 
 @Resolver()
@@ -44,9 +49,10 @@ export class AwsS3 {
     LATITUE,
     LONGITUDE,
     DESCRIPTION,
+    ID_PIEZA,
   }: PhotoArgs): Promise<Array<Array<T>>> {
     return db_instance.connection.query(
-      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION, :ID_STRUCTURE_STEP_3, :TYPE, :LATITUE, :LONGITUDE, :DESCRIPTION",
+      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION,:ID_STRUCTURE_STEP_3,:TYPE,:LATITUE,:LONGITUDE,:DESCRIPTION,:ID_PIEZA",
       {
         replacements: {
           ID_INSPECCION,
@@ -55,6 +61,7 @@ export class AwsS3 {
           LATITUE,
           LONGITUDE,
           DESCRIPTION,
+          ID_PIEZA,
         },
       }
     ) as any;
@@ -67,10 +74,10 @@ export class AwsS3 {
     LATITUE,
     LONGITUDE,
     DESCRIPTION,
-    ID_PART,
+    ID_PIEZA,
   }: DamageArgs): Promise<Array<Array<T>>> {
     return db_instance.connection.query(
-      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION, :ID_STRUCTURE_STEP_4, :TYPE, :LATITUE, :LONGITUDE, :DESCRIPTION, :ID_PART",
+      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION,:ID_STRUCTURE_STEP_4,:TYPE,:LATITUE,:LONGITUDE,:DESCRIPTION,:ID_PIEZA",
       {
         replacements: {
           ID_INSPECCION,
@@ -79,7 +86,7 @@ export class AwsS3 {
           LATITUE,
           LONGITUDE,
           DESCRIPTION,
-          ID_PART,
+          ID_PIEZA,
         },
       }
     ) as any;
@@ -94,7 +101,7 @@ export class AwsS3 {
     LONGITUDE,
   }: DocsArgs): Promise<Array<Array<T>>> {
     return db_instance.connection.query(
-      "EXEC PA_INGRESA_DOCUMENTS_STEP_3 :ID_INSPECCION, :ID_STRUCTURE_STEP_3, :NAME, :TYPE, :LATITUE, :LONGITUDE",
+      "EXEC PA_INGRESA_DOCUMENTS_STEP_3 :ID_INSPECCION,:ID_STRUCTURE_STEP_3,:NAME,:TYPE,:LATITUE,:LONGITUDE",
       {
         replacements: {
           ID_INSPECCION,
@@ -110,12 +117,25 @@ export class AwsS3 {
 
   handleUploadPhoto = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_PHOTO_STEP_3<string>({
+      await this.CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
           : 0,
-        ID_PART: ctx.body.ID_PART,
+        ID_PIEZA: ctx.body.ID_PIEZA,
+        ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
+        LATITUE: ctx.body.LATITUE,
+        LONGITUDE: ctx.body.LONGITUDE,
+        TYPE: ctx.body.TYPE,
+      })
+    );
+
+  handleUploadAccesories = async (ctx: ContextLET) =>
+    ResponseSP2D(
+      await this.CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
+        DESCRIPTION: ctx.body.DESCRIPTION,
+        ID_INSPECCION: 999,
+        ID_PIEZA: ctx.body.ID_PIEZA,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
         LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
@@ -125,12 +145,12 @@ export class AwsS3 {
 
   handleUploadDamage = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_PHOTO_STEP_4<string>({
+      await this.CALL_PA_INGRESA_PHOTO_STEP_4<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
           : 0,
-        ID_PART: ctx.body.ID_PART,
+        ID_PIEZA: ctx.body.ID_PIEZA,
         ID_STRUCTURE_STEP_4: ctx.body.ID_STRUCTURE_STEP_4,
         LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
@@ -140,7 +160,7 @@ export class AwsS3 {
 
   handleUploadDocuments = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_DOCUMENTS_STEP_3<string>({
+      await this.CALL_PA_INGRESA_DOCUMENTS_STEP_3<SpGetName>({
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
           : 0,
@@ -154,11 +174,11 @@ export class AwsS3 {
 
   factoryUploadFile = (
     type: string
-  ): ((ctx: ContextLET) => Promise<string>) => {
+  ): ((ctx: ContextLET) => Promise<SpGetName>) => {
     const factory: factoryUpload = {
       photo: this.handleUploadPhoto,
       damage: this.handleUploadDamage,
-      accesories: this.handleUploadPhoto,
+      accesories: this.handleUploadAccesories,
       documents: this.handleUploadDocuments,
     };
     return factory[type];
@@ -171,19 +191,18 @@ export class AwsS3 {
     description: "Mutación que permite la subida de archivos a S3",
   })
   async UploadPhoto(@Ctx() ctx: ContextLET): Promise<String> {
-    // console.log(ctx.file);
-    const { buffer, mimetype } = ctx.file as FileUpload;
+    const { buffer } = ctx.file as FileUpload;
     if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
       throw new Error("Token incorrecto");
     }
-    const nameFile = await this.factoryUploadFile(ctx.body.SECTION)(ctx);
+    const response = await this.factoryUploadFile(ctx.body.SECTION)(ctx);
 
-    if (typeof nameFile !== "string" || nameFile.length === 0) {
-      throw new Error("Error en crear nombre de archivo");
+    if (response.MSJ !== "Ok") {
+      throw new Error("Error en generar nombre de archivo");
     }
 
     const isUpload = await uploadFileToBucket({
-      name: nameFile,
+      name: response.NOMBRE_IMG,
       buffer: buffer,
       ID_INSPECTION: Number(ctx.inspection?.ID_INSPECTION),
     });

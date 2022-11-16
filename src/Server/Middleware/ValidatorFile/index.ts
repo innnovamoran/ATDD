@@ -9,7 +9,6 @@ export const ValidatorFile: MiddlewareFn<ContextLET> = async (
 ) => {
   try {
     const file = context?.file;
-    console.log(file);
     if (typeof file === "undefined" || typeof file.mimetype === "undefined") {
       throw new Error("Archivo de subida es requerido");
     }
