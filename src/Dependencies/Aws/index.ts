@@ -29,6 +29,7 @@ const uploadFileToBucket = async ({
   buffer,
   ID_INSPECTION,
 }: ParamsUploadFileToBucket): Promise<string | undefined> => {
+  console.log({ name });
   const folder =
     process.env.NODE_ENV === "develop"
       ? process.env.AWS_FOLDER_DEV + "/i" + ID_INSPECTION
@@ -56,8 +57,7 @@ const uploadFileToBucket = async ({
       Bucket,
     })
   );
-
-  const file = resource.Contents?.find((e) => e.ETag === upload.ETag);
+  const file = resource.Contents?.find((e) => e.Key === `${FileName}`);
   return file?.Key;
 };
 
