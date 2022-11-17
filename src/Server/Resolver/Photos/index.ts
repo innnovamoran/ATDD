@@ -10,7 +10,10 @@ import { PhotosStructure as PhotosStructureSchema } from "../../../Core/Schemas/
 import { PhotosValidations as PhotosValidationsSchema } from "../../../Core/Schemas/Screen/Photos/PhotosValidations";
 import { PhotosWarning as PhotosWarningSchema } from "../../../Core/Schemas/Screen/Photos/PhotosWarning";
 import { PhotosHelpDesk as PhotosHelpDeskSchema } from "../../../Core/Schemas/Screen/Photos/PhotosHelpDesk";
-import { ValidateIDInspection } from "../../../Services/ValidateArgs";
+import {
+  ValidateIDInspection,
+  ValidateIDNumber,
+} from "../../../Services/ValidateArgs";
 
 const db_instance = new ORM();
 
@@ -69,7 +72,6 @@ export class Photos {
   @Query((returns) => PhotosSchema, { name: "Photos" })
   async Photos(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
-
     return {
       ...ResponseSP2D(
         await this.CALL_PA_STEP_THREE<PhotosSchema>(ID_INSPECTION)
@@ -91,7 +93,7 @@ export class Photos {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
-        ID_STRUCTURE_STEP_3,
+        ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )
     );
@@ -106,7 +108,7 @@ export class Photos {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_WARNING_STEP_3<PhotosWarningSchema>(
-        ID_STRUCTURE_STEP_3,
+        ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )
     );
@@ -121,7 +123,7 @@ export class Photos {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_CONFIG_SCREEEN_HELP_STEP_3<PhotosHelpDeskSchema>(
-        ID_STRUCTURE_STEP_3,
+        ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )
     );

@@ -14,7 +14,10 @@ import { AccesoriesStructure as AccesoriesStructureSchema } from "../../../Core/
 import { ContextLET } from "../..";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { accesoriesArgs } from "../../../Core/Schemas/Inputs/accesoriesArgs";
-import { ValidateIDInspection } from "../../../Services/ValidateArgs";
+import {
+  ValidateFormsArgs,
+  ValidateIDInspection,
+} from "../../../Services/ValidateArgs";
 
 const db_instance = new ORM();
 
@@ -68,17 +71,12 @@ export class Accesories {
     description:
       "Mutación que permite actualizar los accesorios de la inspección",
   })
-  async UpdateAccesories(
-    @Args() { ID_CAMPO, VALUE }: accesoriesArgs,
-    @Ctx() ctx: ContextLET
-  ) {
+  async UpdateAccesories(@Args() args: accesoriesArgs, @Ctx() ctx: ContextLET) {
+    ValidateFormsArgs(args);
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const response = ResponseSP2D(
       await this.PA_ACTUALIZA_ACCESORIOS_APP<{ MSJ: string }>(
-        {
-          ID_CAMPO,
-          VALUE,
-        },
+        args,
         ID_INSPECTION
       )
     );

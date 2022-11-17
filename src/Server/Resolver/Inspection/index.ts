@@ -9,7 +9,10 @@ import { Theme as ThemeSchema } from "../../../Core/Schemas/Theme";
 import { CreateDate } from "../../../Dependencies/useDate";
 
 import { GenerateToken } from "../../../Services/Auth";
-import { ValidateInspectionsArgs } from "../../../Services/ValidateArgs";
+import {
+  ValidateInspectionsArgs,
+  ValidateStartInspectionArgs,
+} from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
@@ -91,12 +94,11 @@ export class Inspection {
     @Args()
     { ID_INSPECTION, TIME_INSPECTION }: startInspectionArgs
   ) {
+    ValidateStartInspectionArgs({ ID_INSPECTION, TIME_INSPECTION });
     const START_DATE = CreateDate(new Date(Date.now()));
-
     const END_DATE = CreateDate(
       new Date(Date.now()).getTime() + Number(TIME_INSPECTION)
     );
-
     return await GenerateToken(
       {
         ID_INSPECTION,

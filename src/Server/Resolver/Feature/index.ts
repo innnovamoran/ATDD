@@ -16,7 +16,10 @@ import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 import ORM from "../../Config/DataSource";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { featureArgs } from "../../../Core/Schemas/Inputs/setFeaturesArgs";
-import { ValidateIDInspection } from "../../../Services/ValidateArgs";
+import {
+  ValidateFormsArgs,
+  ValidateIDInspection,
+} from "../../../Services/ValidateArgs";
 const db_instance = new ORM();
 
 @Resolver()
@@ -116,19 +119,13 @@ export class Feature {
     name: "UpdateFeature",
     description: "Mutación que entrega JWT asociado a la inspección en curso",
   })
-  async UpdateFeature(
-    //RECIBO VARIABLE feature QUE REPRESENTA ARRAY DE OBJETOS CON CLAVES "ID_CAMPO" Y "VALUE"
-    @Args() { ID_CAMPO, VALUE }: featureArgs,
-    @Ctx() ctx: ContextLET
-  ) {
+  async UpdateFeature(@Args() args: featureArgs, @Ctx() ctx: ContextLET) {
+    ValidateFormsArgs(args);
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const response = ResponseSP2D(
       await this.CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<{ MSJ: string }>(
         ID_INSPECTION,
-        {
-          ID_CAMPO,
-          VALUE,
-        }
+        args
       )
     );
     if (response.MSJ === "Ok") {

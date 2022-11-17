@@ -1,7 +1,7 @@
 import { Query, Resolver } from "type-graphql";
 
 import ORM from "../../Config/DataSource";
-import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
+import { ResponseSP2D } from "../../../Services/ValidateSP";
 import { Summary as SummarySchema } from "../../../Core/Schemas/Screen/Summary";
 
 const db_instance = new ORM();
