@@ -363,3 +363,18 @@ export const CALL_PA_ELEMENTS_STRUCTURE_STEP_4 = async<T>(
     }
   ) as any;
 }
+
+export const CALL_PA_FINISH_INSPECTION_APP_AI = async<T>(
+  ID_INSPECCION: Number,
+  EMAIL: String,
+): StoreProcedure<T> => {
+  return db_instance.connection.query(
+    "EXEC PA_FINISH_INSPECTION_APP_AI  :ID_INSPECCION, :EMAIL",
+    {
+      replacements: { 
+        ID_INSPECCION, 
+        EMAIL
+      },
+    }
+  ) as any;
+}

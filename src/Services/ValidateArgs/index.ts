@@ -159,6 +159,12 @@ export const ValidateIDNumber = (ID: unknown): Number => {
   }
   return ID as Number;
 };
+export const ValidateEmail = (EMAIL: unknown): String => {
+  if(typeof EMAIL === "undefined" || typeof EMAIL !== "string" || !isEmail(EMAIL)) {
+    throw new Error("EMAIL incorrecto");
+  }
+  return EMAIL as String;
+};
 
 export const ValidatorUploadFiles = (
   args: accesoriesArgs | PhotoArgs | VideoArgs | DamageArgs | DocsArgs,
