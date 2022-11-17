@@ -35,7 +35,7 @@ export class Damages {
     description: "Query que obtiene elementos de daño",
   })
   async DamageElements(
-    @Arg("ID_STRUCTURE_STEP_4") ID_STRUCTURE_STEP_4: number,
+    @Arg("ID_STRUCTURE_STEP_4") ID_STRUCTURE_STEP_4: Number,
     @Ctx() ctx: ContextLET
   ) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
