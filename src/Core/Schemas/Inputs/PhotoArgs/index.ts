@@ -111,3 +111,32 @@ export class DamageArgs {
   })
   ID_PIEZA!: Number;
 }
+
+@ArgsType()
+export class VideoArgs {
+  @Field((type) => Number, {
+    description: "Identificador único de inspección",
+    nullable: false,
+  })
+  OI!: Number;
+  @Field((type) => Number, {
+    description: "ID identificador de estructura de paso",
+    nullable: false,
+  })
+  ID_STRUCTURE_STEP_3!: Number;
+  @Field((type) => String, {
+    description: "Mimetype de archivo",
+    nullable: false,
+  })
+  MIME!: String;
+  @Field((type) => String, {
+    description: "Geo-Ubicación de usuario",
+    nullable: false,
+  })
+  LATITUDE!: String;
+  @Field((type) => String, {
+    description: "Geo-Ubicación de usuario",
+    nullable: false,
+  })
+  LONGITUDE!: String;
+}

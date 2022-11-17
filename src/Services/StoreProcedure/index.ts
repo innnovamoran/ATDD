@@ -4,6 +4,7 @@ import {
   DamageArgs,
   DocsArgs,
   PhotoArgs,
+  VideoArgs,
 } from "../../Core/Schemas/Inputs/PhotoArgs";
 import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 import ORM from "../../Server/Config/DataSource";
@@ -55,6 +56,26 @@ export const CALL_PA_INGRESA_PHOTO_STEP_3 = async <T>({
         LONGITUDE,
         DESCRIPTION,
         ID_PIEZA,
+      },
+    }
+  ) as any;
+
+export const CALL_PA_INGRESA_VIDEO_STEP_3 = async <T>({
+  OI,
+  ID_STRUCTURE_STEP_3,
+  MIME,
+  LATITUDE,
+  LONGITUDE,
+}: VideoArgs): StoreProcedure<T> =>
+  db_instance.connection.query(
+    "EXEC PA_INGRESA_VIDEO_STEP_3 :OI,:ID_STRUCTURE_STEP_3,:MIME,:LATITUDE,:LONGITUDE",
+    {
+      replacements: {
+        OI,
+        ID_STRUCTURE_STEP_3,
+        MIME,
+        LATITUDE,
+        LONGITUDE,
       },
     }
   ) as any;

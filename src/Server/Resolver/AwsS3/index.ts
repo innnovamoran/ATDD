@@ -19,6 +19,7 @@ import {
   CALL_PA_INGRESA_DOCUMENTS_STEP_3,
   CALL_PA_INGRESA_PHOTO_STEP_3,
   CALL_PA_INGRESA_PHOTO_STEP_4,
+  CALL_PA_INGRESA_VIDEO_STEP_3,
 } from "../../../Services/StoreProcedure";
 
 type FileUpload = {
@@ -34,9 +35,14 @@ type SpGetName = {
   MSJ: string;
   NOMBRE_IMG: string;
 };
+type SpGetNameVideo = {
+  MSJ: string;
+  NOMBRE_VIDEO: string;
+};
 
+type spGenerictNameFile = { MSJ: string; name: string };
 interface factoryUpload {
-  [key: string]: (ctx: ContextLET) => Promise<SpGetName>;
+  [key: string]: (ctx: ContextLET) => Promise<SpGetName | SpGetNameVideo>;
 }
 
 @Resolver()
@@ -44,15 +50,29 @@ export class AwsS3 {
   handleUploadPhoto = async (ctx: ContextLET) =>
     ResponseSP2D(
       await CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
-        DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
           : 0,
-        ID_PIEZA: ctx.body.ID_PIEZA,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUE: ctx.body.LATITUE,
+        LATITUE: ctx.body.LATITUDE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
+        DESCRIPTION: "", // no requerido
+        ID_PIEZA: 0, // no requerido
+      })
+    );
+
+  handleUploadDocuments = async (ctx: ContextLET) =>
+    ResponseSP2D(
+      await CALL_PA_INGRESA_DOCUMENTS_STEP_3<SpGetName>({
+        ID_INSPECCION: ctx.inspection?.ID_INSPECTION
+          ? ctx.inspection.ID_INSPECTION
+          : 0,
+        ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
+        LATITUE: ctx.body.LATITUDE,
+        LONGITUDE: ctx.body.LONGITUDE,
+        TYPE: ctx.body.TYPE,
+        NAME: ctx.body.NAME,
       })
     );
 
@@ -60,12 +80,14 @@ export class AwsS3 {
     ResponseSP2D(
       await CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
-        ID_INSPECCION: 999,
-        ID_PIEZA: ctx.body.ID_PIEZA,
-        ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUE: ctx.body.LATITUE,
+        ID_STRUCTURE_STEP_3: 999, // como es foto de accesorio por defecto se entrega el id es 999
+        LATITUE: ctx.body.LATITUDE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
+        ID_INSPECCION: ctx.inspection?.ID_INSPECTION
+          ? ctx.inspection.ID_INSPECTION
+          : 0,
+        ID_PIEZA: 0, // no requerido
       })
     );
 
@@ -78,37 +100,48 @@ export class AwsS3 {
           : 0,
         ID_PIEZA: ctx.body.ID_PIEZA,
         ID_STRUCTURE_STEP_4: ctx.body.ID_STRUCTURE_STEP_4,
-        LATITUE: ctx.body.LATITUE,
+        LATITUE: ctx.body.LATITUDE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
       })
     );
 
-  handleUploadDocuments = async (ctx: ContextLET) =>
+  handleUploadVideo = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await CALL_PA_INGRESA_DOCUMENTS_STEP_3<SpGetName>({
-        ID_INSPECCION: ctx.inspection?.ID_INSPECTION
-          ? ctx.inspection.ID_INSPECTION
-          : 0,
+      await CALL_PA_INGRESA_VIDEO_STEP_3<SpGetNameVideo>({
+        OI: ctx.inspection?.ID_INSPECTION ? ctx.inspection.ID_INSPECTION : 0,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUE: ctx.body.LATITUE,
+        LATITUDE: ctx.body.LATITUDE,
         LONGITUDE: ctx.body.LONGITUDE,
-        TYPE: ctx.body.TYPE,
-        NAME: ctx.body.NAME,
+        MIME: ctx.body.TYPE,
       })
     );
 
   factoryUploadFile = (
     type: string
-  ): ((ctx: ContextLET) => Promise<SpGetName>) => {
+  ): ((ctx: ContextLET) => Promise<SpGetName | SpGetNameVideo>) => {
     const factory: factoryUpload = {
       photo: this.handleUploadPhoto,
       damage: this.handleUploadDamage,
       accesories: this.handleUploadAccesories,
       documents: this.handleUploadDocuments,
+      video: this.handleUploadVideo,
     };
     return factory[type];
   };
+
+  handleGetName(
+    response: SpGetName | SpGetNameVideo,
+    SECTION: String
+  ): spGenerictNameFile {
+    if (SECTION === "video") {
+      const r = response as SpGetNameVideo;
+      return { MSJ: r.MSJ, name: r.NOMBRE_VIDEO };
+    } else {
+      const r = response as SpGetName;
+      return { MSJ: r.MSJ, name: r.NOMBRE_IMG };
+    }
+  }
 
   @UseMiddleware(InspectionAccess)
   @UseMiddleware(ValidatorFile)
@@ -119,14 +152,18 @@ export class AwsS3 {
   async UploadPhoto(@Ctx() ctx: ContextLET): Promise<String> {
     const { buffer } = ctx.file as FileUpload;
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
-    const response = await this.factoryUploadFile(ctx.body.SECTION)(ctx);
+
+    const response: spGenerictNameFile = this.handleGetName(
+      await this.factoryUploadFile(ctx.body.SECTION)(ctx),
+      ctx.body.SECTION
+    );
 
     if (response.MSJ !== "Ok") {
-      throw new Error("Error en generar nombre de archivo");
+      throw new Error(response.name);
     }
 
     const isUpload = await uploadFileToBucket({
-      name: response.NOMBRE_IMG,
+      name: response.name,
       buffer: buffer,
       ID_INSPECTION: Number(ID_INSPECTION),
     });
