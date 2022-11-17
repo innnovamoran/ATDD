@@ -1,5 +1,11 @@
 import { isNotEmpty } from "class-validator";
 import { accesoriesArgs } from "../../Core/Schemas/Inputs/accesoriesArgs";
+import {
+  DamageArgs,
+  DocsArgs,
+  PhotoArgs,
+  VideoArgs,
+} from "../../Core/Schemas/Inputs/PhotoArgs";
 import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 
 const messageRequire = "es requerido";
@@ -49,6 +55,72 @@ const ValidateFildsForms = ({
   return;
 };
 
+const ValidateUploadPhotoArgs = (args: unknown) => {
+  const r = args as PhotoArgs;
+  if (
+    (!isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
+      !isTypeNumber(r.ID_STRUCTURE_STEP_3)) ||
+    (!isNotEmpty(r.LATITUE) && !isTypeNumber(r.LATITUE)) ||
+    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
+    (!isNotEmpty(r.TYPE) && !isTypeString(r.TYPE))
+  ) {
+    throw new Error("Uno o más argumentos faltan en la solicitud");
+  }
+  return;
+};
+const ValidateUploadDocumentsArgs = (args: unknown) => {
+  const r = args as DocsArgs;
+  if (
+    (!isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
+      !isTypeNumber(r.ID_STRUCTURE_STEP_3)) ||
+    (!isNotEmpty(r.LATITUE) && !isTypeNumber(r.LATITUE)) ||
+    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
+    (!isNotEmpty(r.TYPE) && !isTypeString(r.TYPE))
+  ) {
+    throw new Error("Uno o más argumentos faltan en la solicitud");
+  }
+  return;
+};
+const ValidateUploadVideoArgs = (args: unknown) => {
+  const r = args as VideoArgs;
+  if (
+    (!isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
+      !isTypeNumber(r.ID_STRUCTURE_STEP_3)) ||
+    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
+    (!isNotEmpty(r.MIME) && !isTypeString(r.MIME))
+  ) {
+    throw new Error("Uno o más argumentos faltan en la solicitud");
+  }
+  return;
+};
+const ValidateUploadAccesoriesArgs = (args: unknown) => {
+  const r = args as PhotoArgs;
+  if (
+    (!isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
+      !isTypeNumber(r.ID_STRUCTURE_STEP_3)) ||
+    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
+    (!isNotEmpty(r.TYPE) && !isTypeString(r.TYPE)) ||
+    (!isNotEmpty(r.DESCRIPTION) && !isTypeString(r.DESCRIPTION))
+  ) {
+    throw new Error("Uno o más argumentos faltan en la solicitud");
+  }
+  return;
+};
+const ValidateUploadDamageArgs = (args: unknown) => {
+  const r = args as DamageArgs;
+  if (
+    (!isNotEmpty(r.ID_STRUCTURE_STEP_4) &&
+      !isTypeNumber(r.ID_STRUCTURE_STEP_4)) ||
+    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
+    (!isNotEmpty(r.TYPE) && !isTypeString(r.TYPE)) ||
+    (!isNotEmpty(r.ID_PIEZA) && !isTypeString(r.ID_PIEZA)) ||
+    (!isNotEmpty(r.DESCRIPTION) && !isTypeString(r.DESCRIPTION))
+  ) {
+    throw new Error("Uno o más argumentos faltan en la solicitud");
+  }
+  return;
+};
+
 export const ValidateInspectionsArgs = (Args: unknown) => {
   ValidateArgsRequired(Args as GenerticObject);
   ValidateArgsTypeString(Args as GenerticObject);
@@ -74,4 +146,43 @@ export const ValidateIDNumber = (ID: unknown): Number => {
     throw new Error("ID debe ser de tipo numerico");
   }
   return ID as Number;
+};
+
+export const ValidatorUploadFiles = (
+  args: accesoriesArgs | PhotoArgs | VideoArgs | DamageArgs | DocsArgs,
+  SECTION: string
+) => {
+  if (SECTION === "video") {
+    ValidateUploadVideoArgs(args);
+  }
+  if (SECTION === "photo") {
+    ValidateUploadPhotoArgs(args);
+  }
+  if (SECTION === "documents") {
+    ValidateUploadDocumentsArgs(args);
+  }
+  if (SECTION === "damage") {
+    ValidateUploadDamageArgs(args);
+  }
+  if (SECTION === "accesories") {
+    ValidateUploadAccesoriesArgs(args);
+  }
+
+  return;
+};
+
+export const ValidatorSectionFactory = (SECTION: string) => {
+  if (typeof SECTION === "undefined") {
+    throw new Error("Sección no pertene a fabrica de cargas de S3");
+  }
+  if (
+    SECTION === "video" ||
+    SECTION === "photo" ||
+    SECTION === "damage" ||
+    SECTION === "accesories" ||
+    SECTION === "documents"
+  ) {
+    return;
+  }
+  throw new Error("Sección no pertene a fabrica de cargas de S3");
 };
