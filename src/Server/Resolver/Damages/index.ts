@@ -19,7 +19,7 @@ export class Damages {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => Damage, { 
     name: "Damages", 
-    description: "Query que obtiene estructura de datos y diferentes propiedades para armar pantalla", 
+    description: "Query que obtiene estructura de datos y diferentes propiedades para armar pantalla de daños por inspección", 
   })
   async Damages(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
