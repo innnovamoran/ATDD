@@ -13,15 +13,13 @@ import { ContextLET } from "../..";
 import { ValidatorFile } from "../../Middleware/ValidatorFile";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
-import ORM from "../../Config/DataSource";
-import {
-  DamageArgs,
-  DocsArgs,
-  PhotoArgs,
-} from "../../../Core/Schemas/Inputs/PhotoArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 import { ValidateIDInspection } from "../../../Services/ValidateArgs";
-const db_instance = new ORM();
+import {
+  CALL_PA_INGRESA_DOCUMENTS_STEP_3,
+  CALL_PA_INGRESA_PHOTO_STEP_3,
+  CALL_PA_INGRESA_PHOTO_STEP_4,
+} from "../../../Services/StoreProcedure";
 
 type FileUpload = {
   fieldname: string;
@@ -43,82 +41,9 @@ interface factoryUpload {
 
 @Resolver()
 export class AwsS3 {
-  CALL_PA_INGRESA_PHOTO_STEP_3<T>({
-    ID_INSPECCION,
-    ID_STRUCTURE_STEP_3,
-    TYPE,
-    LATITUE,
-    LONGITUDE,
-    DESCRIPTION,
-    ID_PIEZA,
-  }: PhotoArgs): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION,:ID_STRUCTURE_STEP_3,:TYPE,:LATITUE,:LONGITUDE,:DESCRIPTION,:ID_PIEZA",
-      {
-        replacements: {
-          ID_INSPECCION,
-          ID_STRUCTURE_STEP_3,
-          TYPE,
-          LATITUE,
-          LONGITUDE,
-          DESCRIPTION,
-          ID_PIEZA,
-        },
-      }
-    ) as any;
-  }
-
-  CALL_PA_INGRESA_PHOTO_STEP_4<T>({
-    ID_INSPECCION,
-    ID_STRUCTURE_STEP_4,
-    TYPE,
-    LATITUE,
-    LONGITUDE,
-    DESCRIPTION,
-    ID_PIEZA,
-  }: DamageArgs): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_INGRESA_PHOTO_STEP_3_V2 :ID_INSPECCION,:ID_STRUCTURE_STEP_4,:TYPE,:LATITUE,:LONGITUDE,:DESCRIPTION,:ID_PIEZA",
-      {
-        replacements: {
-          ID_INSPECCION,
-          ID_STRUCTURE_STEP_4,
-          TYPE,
-          LATITUE,
-          LONGITUDE,
-          DESCRIPTION,
-          ID_PIEZA,
-        },
-      }
-    ) as any;
-  }
-
-  CALL_PA_INGRESA_DOCUMENTS_STEP_3<T>({
-    ID_INSPECCION,
-    ID_STRUCTURE_STEP_3,
-    NAME,
-    TYPE,
-    LATITUE,
-    LONGITUDE,
-  }: DocsArgs): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_INGRESA_DOCUMENTS_STEP_3 :ID_INSPECCION,:ID_STRUCTURE_STEP_3,:NAME,:TYPE,:LATITUE,:LONGITUDE",
-      {
-        replacements: {
-          ID_INSPECCION,
-          ID_STRUCTURE_STEP_3,
-          NAME,
-          TYPE,
-          LATITUE,
-          LONGITUDE,
-        },
-      }
-    ) as any;
-  }
-
   handleUploadPhoto = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
+      await CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
@@ -133,7 +58,7 @@ export class AwsS3 {
 
   handleUploadAccesories = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
+      await CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: 999,
         ID_PIEZA: ctx.body.ID_PIEZA,
@@ -146,7 +71,7 @@ export class AwsS3 {
 
   handleUploadDamage = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_PHOTO_STEP_4<SpGetName>({
+      await CALL_PA_INGRESA_PHOTO_STEP_4<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
@@ -161,7 +86,7 @@ export class AwsS3 {
 
   handleUploadDocuments = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await this.CALL_PA_INGRESA_DOCUMENTS_STEP_3<SpGetName>({
+      await CALL_PA_INGRESA_DOCUMENTS_STEP_3<SpGetName>({
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
           ? ctx.inspection.ID_INSPECTION
           : 0,

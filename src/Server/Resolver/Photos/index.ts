@@ -1,6 +1,5 @@
 import { Arg, Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
 
-import ORM from "../../Config/DataSource";
 import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 import { ContextLET } from "../..";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
@@ -14,72 +13,23 @@ import {
   ValidateIDInspection,
   ValidateIDNumber,
 } from "../../../Services/ValidateArgs";
-
-const db_instance = new ORM();
-
+import {
+  CALL_PA_CONFIG_SCREEEN_HELP_STEP_3,
+  CALL_PA_STEP_THREE,
+  CALL_PA_STRUCTURE_STEP_3,
+  CALL_PA_VALIDATIONS_STEP_3,
+  CALL_PA_WARNING_STEP_3,
+} from "../../../Services/StoreProcedure";
 @Resolver()
 export class Photos {
-  async CALL_PA_STEP_THREE<T>(ID_INSPECCION: Number): Promise<Array<Array<T>>> {
-    return db_instance.connection.query("EXEC PA_STEP_THREE :ID_INSPECCION", {
-      replacements: { ID_INSPECCION },
-    }) as any;
-  }
-  async CALL_PA_STRUCTURE_STEP_3<T>(
-    ID_INSPECCION: Number
-  ): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_STRUCTURE_STEP_3 :ID_INSPECCION",
-      {
-        replacements: { ID_INSPECCION },
-      }
-    ) as any;
-  }
-  async CALL_PA_VALIDATIONS_STEP_3<T>(
-    ID_STRUCTURE_STEP_3: Number,
-    ID_INSPECCION: Number
-  ): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_VALIDATIONS_STEP_3 :ID_STRUCTURE_STEP_3, :ID_INSPECCION",
-      {
-        replacements: { ID_STRUCTURE_STEP_3, ID_INSPECCION },
-      }
-    ) as any;
-  }
-  async CALL_PA_WARNING_STEP_3<T>(
-    ID_STRUCTURE_STEP_3: Number,
-    ID_INSPECCION: Number
-  ): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_WARNING_STEP_3 :ID_STRUCTURE_STEP_3, :ID_INSPECCION",
-      {
-        replacements: { ID_STRUCTURE_STEP_3, ID_INSPECCION },
-      }
-    ) as any;
-  }
-  async CALL_PA_CONFIG_SCREEEN_HELP_STEP_3<T>(
-    ID_STRUCTURE_STEP_3: Number,
-    ID_INSPECCION: Number
-  ): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      "EXEC PA_CONFIG_SCREEEN_HELP_STEP_3 :ID_INSPECCION, :ID_STRUCTURE_STEP_3",
-      {
-        replacements: { ID_STRUCTURE_STEP_3, ID_INSPECCION },
-      }
-    ) as any;
-  }
-
   @UseMiddleware(InspectionAccess)
   @Query((returns) => PhotosSchema, { name: "Photos" })
   async Photos(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
-      ...ResponseSP2D(
-        await this.CALL_PA_STEP_THREE<PhotosSchema>(ID_INSPECTION)
-      ),
+      ...ResponseSP2D(await CALL_PA_STEP_THREE<PhotosSchema>(ID_INSPECTION)),
       structure: ResponseSP(
-        await this.CALL_PA_STRUCTURE_STEP_3<PhotosStructureSchema>(
-          ID_INSPECTION
-        )
+        await CALL_PA_STRUCTURE_STEP_3<PhotosStructureSchema>(ID_INSPECTION)
       ),
     };
   }
@@ -92,7 +42,7 @@ export class Photos {
   ) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
-      await this.CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
+      await CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
         ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )
@@ -107,7 +57,7 @@ export class Photos {
   ) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
-      await this.CALL_PA_WARNING_STEP_3<PhotosWarningSchema>(
+      await CALL_PA_WARNING_STEP_3<PhotosWarningSchema>(
         ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )
@@ -122,7 +72,7 @@ export class Photos {
   ) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
-      await this.CALL_PA_CONFIG_SCREEEN_HELP_STEP_3<PhotosHelpDeskSchema>(
+      await CALL_PA_CONFIG_SCREEEN_HELP_STEP_3<PhotosHelpDeskSchema>(
         ValidateIDNumber(ID_STRUCTURE_STEP_3),
         ID_INSPECTION
       )

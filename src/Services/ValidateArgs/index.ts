@@ -4,6 +4,7 @@ import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 
 const messageRequire = "es requerido";
 const messageTypeString = "debe ser tipo string";
+const messageTypeNumber = "debe ser tipo numérico";
 interface GenerticObject {
   [key: string]: string | number | boolean | undefined;
 }
@@ -25,7 +26,7 @@ const ValidateArgsTypeString = (Obj: GenerticObject) => {
 };
 const ValidateArgsTypeNumber = (Obj: GenerticObject) => {
   Object.keys(Obj).forEach((key) => {
-    RejectQuery(isTypeString(Obj[key]), `${key} ${messageTypeString}`);
+    RejectQuery(isTypeNumber(Obj[key]), `${key} ${messageTypeNumber}`);
   });
 };
 

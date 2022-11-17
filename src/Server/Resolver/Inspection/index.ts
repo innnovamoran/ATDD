@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, Mutation, UseMiddleware } from "type-graphql";
+import { Args, Query, Resolver, Mutation } from "type-graphql";
 
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
@@ -10,61 +10,20 @@ import { CreateDate } from "../../../Dependencies/useDate";
 
 import { GenerateToken } from "../../../Services/Auth";
 import {
+  CALL_PA_LOGIN_AI_V2,
+  CALL_PA_TEXT_LOGIN_APP_AI,
+  CALL_PA_THEME,
+} from "../../../Services/StoreProcedure";
+import {
   ValidateInspectionsArgs,
   ValidateStartInspectionArgs,
 } from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
-const db_instance = new ORM();
 
 @Resolver()
 export class Inspection {
-  CALL_PA_LOGIN_AI_V2<T>({
-    APPNAME,
-    APPVERSION,
-    INTERNET_PROVIDER,
-    PATENTE,
-    PHONE_BRAND,
-    PHONE_MODEL,
-    PHONE_SO,
-    PLATAFORM,
-    RUT,
-    TOKEN_FIREBASE,
-  }: getInspectionArgs): Promise<Array<Array<T>>> {
-    return db_instance.connection.query(
-      `EXEC PA_LOGIN_AI_V2 :RUT,:PATENTE,:PHONE_MODEL,:PHONE_BRAND,:PHONE_SO,:INTERNET_PROVIDER,:TOKEN_FIREBASE,:APPNAME,:APPVERSION,:PLATAFORM`,
-      {
-        replacements: {
-          RUT,
-          PATENTE,
-          PHONE_MODEL,
-          PHONE_BRAND,
-          PHONE_SO,
-          INTERNET_PROVIDER,
-          TOKEN_FIREBASE,
-          APPNAME,
-          APPVERSION,
-          PLATAFORM,
-        },
-      }
-    ) as any; // any aun por no tipar de forma correcta la respuesta de query
-  }
-  CALL_PA_THEME<T>({
-    ID_INSPECCION,
-  }: {
-    ID_INSPECCION: Number;
-  }): Promise<Array<Array<T>>> {
-    return db_instance.connection.query("EXEC PA_THEME_APP_AI :ID_INSPECCION", {
-      replacements: {
-        ID_INSPECCION,
-      },
-    }) as any;
-  }
-  CALL_PA_TEXT_LOGIN_APP_AI<T>(): Promise<Array<Array<T>>> {
-    return db_instance.connection.query("PA_TEXT_LOGIN_APP_AI") as any;
-  }
-
   @Query((returns) => InspectionSchema, {
     name: "Inspection",
     description:
@@ -76,12 +35,12 @@ export class Inspection {
   ) {
     ValidateInspectionsArgs(args);
     const inspection = ResponseSP2D<InspectionSchema>(
-      await this.CALL_PA_LOGIN_AI_V2(args)
+      await CALL_PA_LOGIN_AI_V2(args)
     );
     return {
       ...inspection,
       theme: ResponseSP2D<ThemeSchema>(
-        await this.CALL_PA_THEME({ ID_INSPECCION: inspection.id })
+        await CALL_PA_THEME({ ID_INSPECCION: inspection.id })
       ),
     };
   }
@@ -117,7 +76,7 @@ export class Inspection {
   })
   async Login() {
     return ResponseSP2D<LoginSchema>(
-      await this.CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>()
+      await CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>()
     );
   }
 }
