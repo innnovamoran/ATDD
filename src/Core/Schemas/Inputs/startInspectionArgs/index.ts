@@ -12,4 +12,9 @@ export class startInspectionArgs {
     description: "Tiempo de duración de inspección",
   })
   TIME_INSPECTION!: Number;
+  @Field((type) => String, {
+    nullable: false,
+    description: "Email usuario en inspección",
+  })
+  EMAIL!: String;
 }

@@ -223,6 +223,11 @@ export class EndInspection {
     description: "Tamaño de fuente texto descripción resumen",
   })
   description_resumen_fontSize!: Number;
+  @Field((type) => String, {
+    nullable: true,
+    description: "Email de usuario con inspección en curso",
+  })
+  user_email!: String;
   @Field((type) => [EndInspectionStructure], {
     nullable: true,
     description: "Tamaño de fuente texto descripción resumen",

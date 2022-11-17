@@ -20,8 +20,6 @@ import {
 } from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 
-import ORM from "../../Config/DataSource";
-
 @Resolver()
 export class Inspection {
   @Query((returns) => InspectionSchema, {
@@ -51,9 +49,9 @@ export class Inspection {
   })
   async StartInspection(
     @Args()
-    { ID_INSPECTION, TIME_INSPECTION }: startInspectionArgs
+    { ID_INSPECTION, TIME_INSPECTION, EMAIL }: startInspectionArgs
   ) {
-    ValidateStartInspectionArgs({ ID_INSPECTION, TIME_INSPECTION });
+    ValidateStartInspectionArgs({ ID_INSPECTION, TIME_INSPECTION, EMAIL });
     const START_DATE = CreateDate(new Date(Date.now()));
     const END_DATE = CreateDate(
       new Date(Date.now()).getTime() + Number(TIME_INSPECTION)
@@ -62,6 +60,7 @@ export class Inspection {
       {
         ID_INSPECTION,
         TIME_INSPECTION,
+        EMAIL,
         START_DATE: START_DATE.getTime(),
         END_DATE: END_DATE.getTime(),
       },

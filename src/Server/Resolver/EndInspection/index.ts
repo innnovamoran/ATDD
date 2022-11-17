@@ -26,6 +26,7 @@ export class EndInspection {
       ...ResponseSP2D(
         await CALL_PA_STEP_FIVE<EndInspectionSchema>(ID_INSPECTION)
       ),
+      user_email: ctx.inspection?.EMAIL,
       structure: ResponseSP(
         await CALL_PA_STRUCTURE_STEP_5<EndInspectionSchema>(ID_INSPECTION)
       ),

@@ -1,4 +1,4 @@
-import { isNotEmpty } from "class-validator";
+import { isNotEmpty, isEmail } from "class-validator";
 import { accesoriesArgs } from "../../Core/Schemas/Inputs/accesoriesArgs";
 import {
   DamageArgs,
@@ -11,6 +11,7 @@ import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 const messageRequire = "es requerido";
 const messageTypeString = "debe ser tipo string";
 const messageTypeNumber = "debe ser tipo numérico";
+const messageTypeEmail = "debe tener formato correcto";
 interface GenerticObject {
   [key: string]: string | number | boolean | undefined;
 }
@@ -32,13 +33,23 @@ const ValidateArgsTypeString = (Obj: GenerticObject) => {
 };
 const ValidateArgsTypeNumber = (Obj: GenerticObject) => {
   Object.keys(Obj).forEach((key) => {
-    RejectQuery(isTypeNumber(Obj[key]), `${key} ${messageTypeNumber}`);
+    if (key !== "EMAIL") {
+      RejectQuery(isTypeNumber(Obj[key]), `${key} ${messageTypeNumber}`);
+    }
   });
 };
 
 const ValidateArgsRequired = (Obj: GenerticObject) => {
   Object.keys(Obj).forEach((key) => {
     RejectQuery(isNotEmpty(Obj[key]), `${key} ${messageRequire}`);
+  });
+};
+
+const ValidateArgEMAIL = (Obj: GenerticObject) => {
+  Object.keys(Obj).forEach((key) => {
+    if (key === "EMAIL") {
+      RejectQuery(isEmail(Obj[key]), `${key} ${messageTypeEmail}`);
+    }
   });
 };
 
@@ -134,6 +145,7 @@ export const ValidateFormsArgs = (Args: unknown) => {
 export const ValidateStartInspectionArgs = (Args: unknown) => {
   ValidateArgsRequired(Args as GenerticObject);
   ValidateArgsTypeNumber(Args as GenerticObject);
+  ValidateArgEMAIL(Args as GenerticObject);
 };
 export const ValidateIDInspection = (ID_INSPECTION: unknown): Number => {
   if (typeof ID_INSPECTION === "undefined") {
