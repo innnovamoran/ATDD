@@ -26,7 +26,11 @@ import {
 @Resolver()
 export class Accesories {
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => AccesoriesSchema, { name: "Accesories" })
+  @Query((returns) => AccesoriesSchema, {
+    name: "Accesories",
+    description:
+      "Query que obtiene estructura de datos para pantalla accesorios",
+  })
   async Accesories(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {

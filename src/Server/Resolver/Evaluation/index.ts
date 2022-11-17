@@ -16,7 +16,11 @@ import {
 @Resolver()
 export class Evalutation {
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => EvaluationSchema, { name: "Evalutation" })
+  @Query((returns) => EvaluationSchema, {
+    name: "Evalutation",
+    description:
+      "Query que entrega estructura de datos para pantalla de evaluación inspección",
+  })
   async Evalutation(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
 

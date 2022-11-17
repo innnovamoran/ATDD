@@ -6,7 +6,11 @@ import { CALL_PA_TEXT_INICIO_AI } from "../../../Services/StoreProcedure";
 
 @Resolver()
 export class Summary {
-  @Query((returns) => SummarySchema, { name: "Summary" })
+  @Query((returns) => SummarySchema, {
+    name: "Summary",
+    description:
+      "Query que entrega estructura de pantalla resumen de inspección",
+  })
   async Summary() {
     return ResponseSP2D<SummarySchema>(await CALL_PA_TEXT_INICIO_AI());
   }

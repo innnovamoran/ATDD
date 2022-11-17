@@ -15,7 +15,11 @@ import {
 @Resolver()
 export class EndInspection {
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => EndInspectionSchema, { name: "EndInspection" })
+  @Query((returns) => EndInspectionSchema, {
+    name: "EndInspection",
+    description:
+      "Query que entrega estructura de datos para pantalla de finalizar inspección",
+  })
   async EndInspection(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
@@ -31,6 +35,7 @@ export class EndInspection {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => [TermsAndConditionsSchema], {
     name: "TermsAndConditions",
+    description: "Query que entrega el listado de términos y condiciones de AI",
   })
   async TermsAndConditions(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
