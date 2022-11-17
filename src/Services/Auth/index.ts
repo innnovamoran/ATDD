@@ -3,6 +3,7 @@ import jwt, { VerifyErrors } from "jsonwebtoken";
 export type PayloadGenerateToken = {
   ID_INSPECTION: Number;
   TIME_INSPECTION: Number;
+  EMAIL: String;
   START_DATE: Number;
   END_DATE: Number;
 };

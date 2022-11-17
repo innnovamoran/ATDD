@@ -14,7 +14,11 @@ import { ValidatorFile } from "../../Middleware/ValidatorFile";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
 import { ResponseSP2D } from "../../../Services/ValidateSP";
-import { ValidateIDInspection } from "../../../Services/ValidateArgs";
+import {
+  ValidateIDInspection,
+  ValidatorSectionFactory,
+  ValidatorUploadFiles,
+} from "../../../Services/ValidateArgs";
 import {
   CALL_PA_INGRESA_DOCUMENTS_STEP_3,
   CALL_PA_INGRESA_PHOTO_STEP_3,
@@ -54,7 +58,7 @@ export class AwsS3 {
           ? ctx.inspection.ID_INSPECTION
           : 0,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUE: ctx.body.LATITUDE,
+        LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
         DESCRIPTION: "", // no requerido
@@ -69,7 +73,7 @@ export class AwsS3 {
           ? ctx.inspection.ID_INSPECTION
           : 0,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUE: ctx.body.LATITUDE,
+        LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
         NAME: ctx.body.NAME,
@@ -81,7 +85,7 @@ export class AwsS3 {
       await CALL_PA_INGRESA_PHOTO_STEP_3<SpGetName>({
         DESCRIPTION: ctx.body.DESCRIPTION,
         ID_STRUCTURE_STEP_3: 999, // como es foto de accesorio por defecto se entrega el id es 999
-        LATITUE: ctx.body.LATITUDE,
+        LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
         ID_INSPECCION: ctx.inspection?.ID_INSPECTION
@@ -100,7 +104,7 @@ export class AwsS3 {
           : 0,
         ID_PIEZA: ctx.body.ID_PIEZA,
         ID_STRUCTURE_STEP_4: ctx.body.ID_STRUCTURE_STEP_4,
-        LATITUE: ctx.body.LATITUDE,
+        LATITUE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
         TYPE: ctx.body.TYPE,
       })
@@ -111,7 +115,7 @@ export class AwsS3 {
       await CALL_PA_INGRESA_VIDEO_STEP_3<SpGetNameVideo>({
         OI: ctx.inspection?.ID_INSPECTION ? ctx.inspection.ID_INSPECTION : 0,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
-        LATITUDE: ctx.body.LATITUDE,
+        LATITUDE: ctx.body.LATITUE,
         LONGITUDE: ctx.body.LONGITUDE,
         MIME: ctx.body.TYPE,
       })
@@ -150,7 +154,10 @@ export class AwsS3 {
     description: "Mutación que permite la subida de archivos a S3",
   })
   async UploadPhoto(@Ctx() ctx: ContextLET): Promise<String> {
+    ValidatorSectionFactory(ctx.body.SECTION);
+    ValidatorUploadFiles(ctx.body, ctx.body.SECTION);
     const { buffer } = ctx.file as FileUpload;
+
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
 
     const response: spGenerictNameFile = this.handleGetName(
