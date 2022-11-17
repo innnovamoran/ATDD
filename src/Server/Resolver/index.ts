@@ -10,7 +10,7 @@ import { Photos } from "./Photos";
 import { Damages } from "./Damages";
 import { EndInspection } from "./EndInspection";
 import { Evalutation } from "./Evaluation";
-import { TimerInspection } from "../../Core/Schemas/TimerInspection";
+import { Timer } from "./Timer";
 
 export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Onboarding,
@@ -24,5 +24,5 @@ export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   EndInspection,
   Evalutation,
   Damages,
-  TimerInspection,
+  Timer,
 ];
