@@ -9,6 +9,7 @@ import { Feature } from "./Feature";
 import { Accesories } from "./Accesories";
 import { Photos } from "./Photos";
 import { EndInspection } from "./EndInspection";
+import { Evalutation } from "./Evaluation";
 
 export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Onboarding,
@@ -20,5 +21,6 @@ export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Accesories,
   Photos,
   EndInspection,
+  Evalutation,
   Test,
 ];
