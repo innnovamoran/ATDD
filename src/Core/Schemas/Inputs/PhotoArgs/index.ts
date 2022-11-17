@@ -33,10 +33,10 @@ export class PhotoArgs {
   })
   DESCRIPTION!: String;
   @Field((type) => Number, {
-    description: "ID parte de vehículo",
-    nullable: false,
+    description: "Identificador pieza dañanada",
+    nullable: true,
   })
-  ID_PART!: Number;
+  ID_PIEZA!: Number;
 }
 
 @ArgsType()
@@ -106,8 +106,8 @@ export class DamageArgs {
   })
   DESCRIPTION!: String;
   @Field((type) => Number, {
-    description: "ID parte de vehículo",
-    nullable: false,
+    description: "Identificador pieza dañanada",
+    nullable: true,
   })
-  ID_PART!: Number;
+  ID_PIEZA!: Number;
 }

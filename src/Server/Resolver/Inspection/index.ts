@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, Mutation } from "type-graphql";
+import { Args, Query, Resolver, Mutation, UseMiddleware } from "type-graphql";
 
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
@@ -9,6 +9,10 @@ import { Theme as ThemeSchema } from "../../../Core/Schemas/Theme";
 import { CreateDate } from "../../../Dependencies/useDate";
 
 import { GenerateToken } from "../../../Services/Auth";
+import {
+  ValidateInspectionsArgs,
+  ValidateStartInspectionArgs,
+} from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 
 import ORM from "../../Config/DataSource";
@@ -68,37 +72,18 @@ export class Inspection {
   })
   async Inspection(
     @Args()
-    {
-      APPNAME,
-      APPVERSION,
-      INTERNET_PROVIDER,
-      PATENTE,
-      PHONE_BRAND,
-      PHONE_MODEL,
-      PHONE_SO,
-      PLATAFORM,
-      RUT,
-      TOKEN_FIREBASE,
-    }: getInspectionArgs
+    args: getInspectionArgs
   ) {
+    ValidateInspectionsArgs(args);
     const inspection = ResponseSP2D<InspectionSchema>(
-      await this.CALL_PA_LOGIN_AI_V2({
-        APPNAME,
-        APPVERSION,
-        INTERNET_PROVIDER,
-        PATENTE,
-        PHONE_BRAND,
-        PHONE_MODEL,
-        PHONE_SO,
-        PLATAFORM,
-        RUT,
-        TOKEN_FIREBASE,
-      })
+      await this.CALL_PA_LOGIN_AI_V2(args)
     );
-    const theme = ResponseSP2D<ThemeSchema>(
-      await this.CALL_PA_THEME({ ID_INSPECCION: inspection.id })
-    );
-    return { ...inspection, theme };
+    return {
+      ...inspection,
+      theme: ResponseSP2D<ThemeSchema>(
+        await this.CALL_PA_THEME({ ID_INSPECCION: inspection.id })
+      ),
+    };
   }
 
   @Mutation((returns) => String, {
@@ -109,12 +94,11 @@ export class Inspection {
     @Args()
     { ID_INSPECTION, TIME_INSPECTION }: startInspectionArgs
   ) {
+    ValidateStartInspectionArgs({ ID_INSPECTION, TIME_INSPECTION });
     const START_DATE = CreateDate(new Date(Date.now()));
-
     const END_DATE = CreateDate(
       new Date(Date.now()).getTime() + Number(TIME_INSPECTION)
     );
-
     return await GenerateToken(
       {
         ID_INSPECTION,
