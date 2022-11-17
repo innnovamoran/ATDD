@@ -66,7 +66,7 @@ export class Damages {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => [DamageElementsSchema], { // [DamageElementsSchema]
     name: "DamageElements",
-    description: "Query que obtiene valores de opciones características",
+    description: "Query que obtiene valores de opciones daños",
   })
   async DamageElements(
     @Arg("ID_STRUCTURE_STEP_4") ID_STRUCTURE_STEP_4: number,
