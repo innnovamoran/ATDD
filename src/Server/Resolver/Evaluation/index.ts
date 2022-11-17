@@ -7,6 +7,7 @@ import { ContextLET } from "../..";
 import { Evaluation as EvaluationSchema } from "../../../Core/Schemas/Screen/Evaluation";
 import { EvaluationStructure as EvaluationStructureSchema } from "../../../Core/Schemas/Screen/Evaluation/EvaluationStructure";
 import { EvaluationButton as EvaluationButtonSchema } from "../../../Core/Schemas/Screen/Evaluation/EvaluationButton";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 
 const db_instance = new ORM();
 
@@ -40,24 +41,20 @@ export class Evalutation {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => EvaluationSchema, { name: "Evalutation" })
   async Evalutation(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
 
     return {
       ...ResponseSP2D(
-        await this.CALL_PA_STEP_SIX<EvaluationSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STEP_SIX<EvaluationSchema>(ID_INSPECTION)
       ),
       structure: ResponseSP(
         await this.CALL_PA_LIST_INFOR_STRUCTURE_STEP_6<EvaluationStructureSchema>(
-          ctx.inspection?.ID_INSPECTION
+          ID_INSPECTION
         )
       ),
       btn_evaluation: ResponseSP2D(
         await this.CALL_PA_DESCIPTIONS_STRUCTURE_STEP_6<EvaluationButtonSchema>(
-          ctx.inspection?.ID_INSPECTION
+          ID_INSPECTION
         )
       ),
     };

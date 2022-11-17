@@ -6,6 +6,7 @@ import { ContextLET } from "../..";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { EndInspection as EndInspectionSchema } from "../../../Core/Schemas/Screen/EndInspection";
 import { TermsAndConditions as TermsAndConditionsSchema } from "../../../Core/Schemas/Screen/EndInspection/TermsAndContitions";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 const db_instance = new ORM();
 
 @Resolver()
@@ -40,20 +41,13 @@ export class EndInspection {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => EndInspectionSchema, { name: "EndInspection" })
   async EndInspection(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
-
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
       ...ResponseSP2D(
-        await this.CALL_PA_STEP_FIVE<EndInspectionSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STEP_FIVE<EndInspectionSchema>(ID_INSPECTION)
       ),
       structure: ResponseSP(
-        await this.CALL_PA_STRUCTURE_STEP_5<EndInspectionSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STRUCTURE_STEP_5<EndInspectionSchema>(ID_INSPECTION)
       ),
     };
   }
@@ -63,12 +57,10 @@ export class EndInspection {
     name: "TermsAndConditions",
   })
   async TermsAndConditions(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP(
       await this.CALL_PA_CONDITIONS_STEP_5<TermsAndConditionsSchema>(
-        ctx.inspection?.ID_INSPECTION
+        ID_INSPECTION
       )
     );
   }

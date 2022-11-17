@@ -20,6 +20,7 @@ import {
   PhotoArgs,
 } from "../../../Core/Schemas/Inputs/PhotoArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 const db_instance = new ORM();
 
 type FileUpload = {
@@ -192,9 +193,7 @@ export class AwsS3 {
   })
   async UploadPhoto(@Ctx() ctx: ContextLET): Promise<String> {
     const { buffer } = ctx.file as FileUpload;
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const response = await this.factoryUploadFile(ctx.body.SECTION)(ctx);
 
     if (response.MSJ !== "Ok") {
@@ -204,7 +203,7 @@ export class AwsS3 {
     const isUpload = await uploadFileToBucket({
       name: response.NOMBRE_IMG,
       buffer: buffer,
-      ID_INSPECTION: Number(ctx.inspection?.ID_INSPECTION),
+      ID_INSPECTION: Number(ID_INSPECTION),
     });
 
     if (typeof isUpload === "undefined") {

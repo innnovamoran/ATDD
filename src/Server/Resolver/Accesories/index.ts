@@ -14,6 +14,7 @@ import { AccesoriesStructure as AccesoriesStructureSchema } from "../../../Core/
 import { ContextLET } from "../..";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { accesoriesArgs } from "../../../Core/Schemas/Inputs/accesoriesArgs";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 
 const db_instance = new ORM();
 
@@ -50,20 +51,13 @@ export class Accesories {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => AccesoriesSchema, { name: "Accesories" })
   async Accesories(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
-
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
       ...ResponseSP2D(
-        await this.CALL_PA_STEP_TWO<AccesoriesSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STEP_TWO<AccesoriesSchema>(ID_INSPECTION)
       ),
       structure: ResponseSP(
-        await this.PA_STRUCTURE_STEP_2<AccesoriesStructureSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.PA_STRUCTURE_STEP_2<AccesoriesStructureSchema>(ID_INSPECTION)
       ),
     };
   }
@@ -78,16 +72,14 @@ export class Accesories {
     @Args() { ID_CAMPO, VALUE }: accesoriesArgs,
     @Ctx() ctx: ContextLET
   ) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const response = ResponseSP2D(
       await this.PA_ACTUALIZA_ACCESORIOS_APP<{ MSJ: string }>(
         {
           ID_CAMPO,
           VALUE,
         },
-        ctx.inspection?.ID_INSPECTION
+        ID_INSPECTION
       )
     );
     if (response.MSJ === "Ok") {

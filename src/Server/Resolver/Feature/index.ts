@@ -1,4 +1,12 @@
-import { Arg, Args, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import { ContextLET } from "../..";
 import { Feature as FeatureSchema } from "../../../Core/Schemas/Screen/Feature";
 import { FeatureStructure as FeatureStructureSchema } from "../../../Core/Schemas/Screen/Feature/FeatureStructure";
@@ -8,6 +16,7 @@ import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 import ORM from "../../Config/DataSource";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { featureArgs } from "../../../Core/Schemas/Inputs/setFeaturesArgs";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 const db_instance = new ORM();
 
 @Resolver()
@@ -48,7 +57,7 @@ export class Feature {
 
   CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<T>(
     ID_INSPECCION: Number,
-    { ID_CAMPO, VALUE }: featureArgs,
+    { ID_CAMPO, VALUE }: featureArgs
   ): Promise<Array<Array<T>>> {
     console.log("ID_INSPECCION", ID_INSPECCION);
     console.log("ID_CAMPO", ID_CAMPO);
@@ -59,7 +68,7 @@ export class Feature {
         replacements: {
           ID_INSPECCION,
           ID_CAMPO,
-          VALUE
+          VALUE,
         },
       }
     ) as any;
@@ -71,18 +80,14 @@ export class Feature {
     description: "Query que obtiene valores de pantalla características",
   })
   async Feature(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
       ...ResponseSP2D<FeatureSchema>(
-        await this.CALL_PA_STEP_ONE<FeatureSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STEP_ONE<FeatureSchema>(ID_INSPECTION)
       ),
       structure: ResponseSP<FeatureStructureSchema>(
         await this.CALL_PA_STRUCTURE_STEP_1<FeatureStructureSchema>(
-          ctx.inspection.ID_INSPECTION
+          ID_INSPECTION
         )
       ),
     };
@@ -97,16 +102,11 @@ export class Feature {
     @Arg("ID_STRUCTURE_STEP_1") ID_STRUCTURE_STEP_1: number,
     @Ctx() ctx: ContextLET
   ) {
-    if (
-      typeof ctx.inspection?.ID_INSPECTION === "undefined" ||
-      !ID_STRUCTURE_STEP_1
-    ) {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP<FeatureOptionsSchema>(
       await this.CAL_PA_OPTIONS_STRUCTURE_STEP_1<FeatureOptionsSchema>(
         ID_STRUCTURE_STEP_1,
-        ctx.inspection.ID_INSPECTION
+        ID_INSPECTION
       )
     );
   }
@@ -121,16 +121,10 @@ export class Feature {
     @Args() { ID_CAMPO, VALUE }: featureArgs,
     @Ctx() ctx: ContextLET
   ) {
-    if (
-      typeof ctx.inspection?.ID_INSPECTION === "undefined" ||
-      !ID_CAMPO || !VALUE
-    ) {
-      throw new Error("Token incorrecto");
-    }
-
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const response = ResponseSP2D(
       await this.CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<{ MSJ: string }>(
-        ctx.inspection?.ID_INSPECTION,
+        ID_INSPECTION,
         {
           ID_CAMPO,
           VALUE,

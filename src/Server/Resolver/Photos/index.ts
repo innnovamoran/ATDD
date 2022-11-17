@@ -10,6 +10,7 @@ import { PhotosStructure as PhotosStructureSchema } from "../../../Core/Schemas/
 import { PhotosValidations as PhotosValidationsSchema } from "../../../Core/Schemas/Screen/Photos/PhotosValidations";
 import { PhotosWarning as PhotosWarningSchema } from "../../../Core/Schemas/Screen/Photos/PhotosWarning";
 import { PhotosHelpDesk as PhotosHelpDeskSchema } from "../../../Core/Schemas/Screen/Photos/PhotosHelpDesk";
+import { ValidateIDInspection } from "../../../Services/ValidateArgs";
 
 const db_instance = new ORM();
 
@@ -67,19 +68,15 @@ export class Photos {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => PhotosSchema, { name: "Photos" })
   async Photos(@Ctx() ctx: ContextLET) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
 
     return {
       ...ResponseSP2D(
-        await this.CALL_PA_STEP_THREE<PhotosSchema>(
-          ctx.inspection?.ID_INSPECTION
-        )
+        await this.CALL_PA_STEP_THREE<PhotosSchema>(ID_INSPECTION)
       ),
       structure: ResponseSP(
         await this.CALL_PA_STRUCTURE_STEP_3<PhotosStructureSchema>(
-          ctx.inspection?.ID_INSPECTION
+          ID_INSPECTION
         )
       ),
     };
@@ -91,13 +88,11 @@ export class Photos {
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
   ) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
         ID_STRUCTURE_STEP_3,
-        ctx.inspection?.ID_INSPECTION
+        ID_INSPECTION
       )
     );
   }
@@ -108,13 +103,11 @@ export class Photos {
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
   ) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_WARNING_STEP_3<PhotosWarningSchema>(
         ID_STRUCTURE_STEP_3,
-        ctx.inspection?.ID_INSPECTION
+        ID_INSPECTION
       )
     );
   }
@@ -125,13 +118,11 @@ export class Photos {
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
   ) {
-    if (typeof ctx.inspection?.ID_INSPECTION === "undefined") {
-      throw new Error("Token incorrecto");
-    }
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP2D(
       await this.CALL_PA_CONFIG_SCREEEN_HELP_STEP_3<PhotosHelpDeskSchema>(
         ID_STRUCTURE_STEP_3,
-        ctx.inspection?.ID_INSPECTION
+        ID_INSPECTION
       )
     );
   }
