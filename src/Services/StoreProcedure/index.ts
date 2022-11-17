@@ -331,3 +331,35 @@ export const CALL_PA_CONFIG_SCREEEN_HELP_STEP_3 = async <T>(
 
 export const CALL_PA_TEXT_INICIO_AI = async <T>(): StoreProcedure<T> =>
   db_instance.connection.query("PA_TEXT_INICIO_AI") as any;
+
+export const CALL_PA_STEP_FOUR = async <T>(ID_INSPECTION: Number): StoreProcedure<T> => {
+  return db_instance.connection.query("EXEC PA_STEP_FOUR :ID_INSPECTION", {
+    replacements: { ID_INSPECTION },
+  }) as any;
+}
+
+export const CALL_PA_STRUCTURE_STEP_4 = async<T>(
+  ID_INSPECTION: Number
+): StoreProcedure<T> => {
+  return db_instance.connection.query(
+    "EXEC PA_STRUCTURE_STEP_4 :ID_INSPECTION",
+    {
+      replacements: { ID_INSPECTION },
+    }
+  ) as any;
+}
+
+export const CALL_PA_ELEMENTS_STRUCTURE_STEP_4 = async<T>(
+  ID_INSPECCION: Number,
+  ID_STRUCTURE_STEP_4: Number,
+): StoreProcedure<T> => {
+  return db_instance.connection.query(
+    "EXEC PA_ELEMENTS_STRUCTURE_STEP_4  :ID_INSPECCION, :ID_STRUCTURE_STEP_4",
+    {
+      replacements: { 
+        ID_INSPECCION, 
+        ID_STRUCTURE_STEP_4 
+      },
+    }
+  ) as any;
+}
