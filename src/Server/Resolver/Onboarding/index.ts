@@ -12,7 +12,11 @@ import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 
 @Resolver()
 export class Onboarding {
-  @Query((returns) => OnboardingSchema, { name: "Onboarding" })
+  @Query((returns) => OnboardingSchema, {
+    name: "Onboarding",
+    description:
+      "Query que entrega estructura de datos para pantalla de onboarding",
+  })
   async Onboarding() {
     return {
       ...ResponseSP2D<OnboardingSchema>(await CALL_PA_WELCOME_CAROUSEL()),

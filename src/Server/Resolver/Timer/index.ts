@@ -5,13 +5,13 @@ import { CalculateTimeInspection } from "../../../Services/CalculateTimeInspecti
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
 @Resolver()
-export class Test {
+export class Timer {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => TimerInspection, {
-    name: "CheckTest",
-    description: "Query para hacer consultas de código",
+    name: "CheckTimerInspection",
+    description: "Consulta de tiempo transcurrido de inspección",
   })
-  async CheckTest(@Ctx() ctx: ContextLET) {
+  async CheckTimerInspection(@Ctx() ctx: ContextLET) {
     return CalculateTimeInspection(ctx);
   }
 }

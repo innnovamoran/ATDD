@@ -2,7 +2,6 @@ import { NonEmptyArray } from "type-graphql";
 import { Instructions } from "./Instructions";
 import { Onboarding } from "./Onboarding";
 import { Inspection } from "./Inspection";
-import { Test } from "./Test";
 import { AwsS3 } from "./AwsS3";
 import { Summary } from "./Summary";
 import { Feature } from "./Feature";
@@ -11,6 +10,7 @@ import { Photos } from "./Photos";
 import { Damages } from "./Damages";
 import { EndInspection } from "./EndInspection";
 import { Evalutation } from "./Evaluation";
+import { TimerInspection } from "../../Core/Schemas/TimerInspection";
 
 export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Onboarding,
@@ -23,6 +23,6 @@ export const Resolvers: NonEmptyArray<Function> | NonEmptyArray<string> = [
   Photos,
   EndInspection,
   Evalutation,
-  Test,
   Damages,
+  TimerInspection,
 ];

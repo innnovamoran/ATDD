@@ -32,7 +32,7 @@ export class Feature {
   @UseMiddleware(InspectionAccess)
   @Query((returns) => FeatureSchema, {
     name: "Feature",
-    description: "Query que obtiene valores de pantalla características",
+    description: "Query que obtiene estructura de pantalla características",
   })
   async Feature(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
@@ -67,7 +67,8 @@ export class Feature {
   @UseMiddleware(InspectionAccess)
   @Mutation((returns) => String, {
     name: "UpdateFeature",
-    description: "Mutación que entrega JWT asociado a la inspección en curso",
+    description:
+      "Mutación que permite actualzar los valores seleccionados de caracteristicas de inspección",
   })
   async UpdateFeature(@Args() args: featureArgs, @Ctx() ctx: ContextLET) {
     ValidateFormsArgs(args);

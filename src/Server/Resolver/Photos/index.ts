@@ -23,7 +23,11 @@ import {
 @Resolver()
 export class Photos {
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => PhotosSchema, { name: "Photos" })
+  @Query((returns) => PhotosSchema, {
+    name: "Photos",
+    description:
+      "Query que entrega estructura completa de fotos requeridas para inspección",
+  })
   async Photos(@Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return {
@@ -35,7 +39,11 @@ export class Photos {
   }
 
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => PhotosValidationsSchema, { name: "ValidationPhoto" })
+  @Query((returns) => PhotosValidationsSchema, {
+    name: "ValidationPhoto",
+    description:
+      "Query que entrega listado de validaciones por foto requerida de inspección",
+  })
   async ValidationPhoto(
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
@@ -50,7 +58,11 @@ export class Photos {
   }
 
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => PhotosWarningSchema, { name: "WarningPhoto" })
+  @Query((returns) => PhotosWarningSchema, {
+    name: "WarningPhoto",
+    description:
+      "Query que entrega mensajes informativos y de advertencia por foto requerida de inspección",
+  })
   async WarningPhoto(
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
@@ -65,7 +77,11 @@ export class Photos {
   }
 
   @UseMiddleware(InspectionAccess)
-  @Query((returns) => PhotosHelpDeskSchema, { name: "HelpDeskPhoto" })
+  @Query((returns) => PhotosHelpDeskSchema, {
+    name: "HelpDeskPhoto",
+    description:
+      "Query que entrega estuctura de datos para mesa de ayuda por foto requerdia de inspección",
+  })
   async HelpDeskPhoto(
     @Arg("ID_STRUCTURE_STEP_3") ID_STRUCTURE_STEP_3: Number,
     @Ctx() ctx: ContextLET
