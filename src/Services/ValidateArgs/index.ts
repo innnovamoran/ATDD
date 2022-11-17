@@ -1,4 +1,4 @@
-import { isNotEmpty } from "class-validator";
+import { isNotEmpty, isEmail } from "class-validator";
 import { accesoriesArgs } from "../../Core/Schemas/Inputs/accesoriesArgs";
 import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 
@@ -74,4 +74,10 @@ export const ValidateIDNumber = (ID: unknown): Number => {
     throw new Error("ID debe ser de tipo numerico");
   }
   return ID as Number;
+};
+export const ValidateEmail = (EMAIL: unknown): String => {
+  if(typeof EMAIL === "undefined" || typeof EMAIL !== "string" || !isEmail(EMAIL)) {
+    throw new Error("EMAIL incorrecto");
+  }
+  return EMAIL as String;
 };
