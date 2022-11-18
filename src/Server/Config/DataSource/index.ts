@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import { LOG_ERROR } from "../../../Core/Schemas/HandleLogError";
+import * as tedious from "tedious";
 
 export default class HandleDataBase {
   private static instance: HandleDataBase;
@@ -17,7 +18,7 @@ export default class HandleDataBase {
       type: process.env.TYPE as string,
       host: process.env.HOST as string,
       port: Number(process.env.DB_PORT),
-      username: process.env.DB_MYSQL_USERNAM as string,
+      username: process.env.DB_MYSQL_USERNAME as string,
       password: process.env.PASSWORD as string,
       database: process.env.DATABASE as string,
     };
@@ -33,10 +34,13 @@ export default class HandleDataBase {
       const { database, host, password, port, type, username } =
         this.getConfigOptions();
 
+      console.log({ database, username, password });
+
       const sequelize: Sequelize = new Sequelize(database, username, password, {
         host: host,
-        dialect: "mysql",
-        port: port,
+        dialect: "mssql",
+        dialectModule: tedious, //   <----   <---- this is the key!!
+        define: { underscored: true },
         retry: {
           max: 10,
         },
