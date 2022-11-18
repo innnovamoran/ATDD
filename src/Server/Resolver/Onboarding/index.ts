@@ -1,4 +1,4 @@
-import { Ctx, Query, Resolver } from "type-graphql";
+import { Ctx, Query, Resolver, UseMiddleware } from "type-graphql";
 import { ContextLET } from "../..";
 import {
   StructureCarousel,
@@ -10,9 +10,11 @@ import {
   CALL_PA_WELCOME_CAROUSEL,
 } from "../../../Services/StoreProcedure";
 import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
+import { ValidatorAppConfig } from "../../Middleware/ValidatorAppConfig";
 
 @Resolver()
 export class Onboarding {
+  @UseMiddleware(ValidatorAppConfig)
   @Query((returns) => OnboardingSchema, {
     name: "Onboarding",
     description:
