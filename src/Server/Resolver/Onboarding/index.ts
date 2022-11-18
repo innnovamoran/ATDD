@@ -21,8 +21,6 @@ export class Onboarding {
       "Query que entrega estructura de datos para pantalla de onboarding",
   })
   async Onboarding(@Ctx() ctx: ContextLET) {
-    console.log(ctx.appname, ctx.appversion, ctx.plataform);
-
     return {
       ...ResponseSP2D<OnboardingSchema>(
         await CALL_PA_WELCOME_CAROUSEL({

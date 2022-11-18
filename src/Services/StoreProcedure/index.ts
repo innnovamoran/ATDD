@@ -14,7 +14,8 @@ const db_instance = new ORM();
 var retry = { max: 3 };
 type StoreProcedure<T> = Promise<Array<Array<T>>>;
 
-/** SP pantalla onboarding */
+/** ___________Pantalla onboarding____________ */
+
 export const CALL_PA_WELCOME_CAROUSEL = <T>({
   appname,
   appversion,
@@ -24,7 +25,7 @@ export const CALL_PA_WELCOME_CAROUSEL = <T>({
     "EXEC PA_WELCOME_CAROUSEL :appname,:appversion,:plataform",
     { replacements: { appname, appversion, plataform }, retry }
   ) as any;
-/** SP pantalla onboarding */
+
 export const CALL_PA_STRUCTURE_CAROUSEL = <T>({
   appname,
   appversion,
@@ -36,6 +37,8 @@ export const CALL_PA_STRUCTURE_CAROUSEL = <T>({
   ) as any;
 
 /** ___________Fin - Pantalla onboarding____________ */
+
+/** ___________Pantalla accesorios____________ */
 
 export const CALL_PA_STEP_TWO = async <T>(
   ID_INSPECTION: Number
@@ -61,6 +64,10 @@ export const PA_ACTUALIZA_ACCESORIOS_APP = async <T>(
       replacements: { ID_INSPECCION, ID_CAMPO, VALUE },
     }
   ) as any;
+
+/** ___________Fin - Pantalla accesorios____________ */
+
+/** ___________SP - Ingresar fotos videos____________ */
 
 export const CALL_PA_INGRESA_PHOTO_STEP_3 = async <T>({
   ID_INSPECCION,
@@ -152,6 +159,10 @@ export const CALL_PA_INGRESA_DOCUMENTS_STEP_3 = <T>({
     }
   ) as any;
 
+/** ___________Fin - SP - Ingresar fotos videos____________ */
+
+/** ___________SP - Pantalla finalizar inspección____________ */
+
 export const CALL_PA_STEP_FIVE = async <T>(
   ID_INSPECCION: Number
 ): StoreProcedure<T> =>
@@ -172,6 +183,25 @@ export const CALL_PA_STRUCTURE_STEP_5 = async <T>(
   db_instance.connection.query("EXEC PA_STRUCTURE_STEP_5 :ID_INSPECCION", {
     replacements: { ID_INSPECCION },
   }) as any;
+
+export const CALL_PA_FINISH_INSPECTION_APP_AI = async <T>(
+  ID_INSPECCION: Number,
+  EMAIL: String
+): StoreProcedure<T> => {
+  return db_instance.connection.query(
+    "EXEC PA_FINISH_INSPECTION_APP_AI  :ID_INSPECCION, :EMAIL",
+    {
+      replacements: {
+        ID_INSPECCION,
+        EMAIL,
+      },
+    }
+  ) as any;
+};
+
+/** ___________Fin - SP - Pantalla finalizar inspección____________ */
+
+/** ___________SP - Pantalla evaluación____________ */
 
 export const CALL_PA_STEP_SIX = async <T>(
   ID_INSPECCION: Number
@@ -199,6 +229,10 @@ export const CALL_PA_DESCIPTIONS_STRUCTURE_STEP_6 = <T>(
       replacements: { ID_INSPECCION },
     }
   ) as any;
+
+/** ___________Fin - SP - Pantalla evaluación____________ */
+
+/** ___________SP - Pantalla caracteristicas____________ */
 
 export const CALL_PA_STEP_ONE = async <T>(
   ID_INSPECCION: Number
@@ -247,6 +281,10 @@ export const CALL_PA_ACTUALIZA_CARACTERISTICAS_APP = async <T>(
     }
   ) as any;
 
+/** ___________Fin - SP - Pantalla caracteristicas____________ */
+
+/** ___________SP - Pantalla login____________ */
+
 export const CALL_PA_LOGIN_AI_V2 = async <T>({
   APPNAME,
   APPVERSION,
@@ -291,6 +329,10 @@ export const CALL_PA_THEME = async <T>({
 export const CALL_PA_TEXT_LOGIN_APP_AI = async <T>(): StoreProcedure<T> =>
   db_instance.connection.query("EXEC PA_TEXT_LOGIN_APP_AI") as any;
 
+/** ___________Fin - SP - Pantalla login____________ */
+
+/** ___________SP - Pantalla instucciones____________ */
+
 export const CALL_PA_INSTRUCTIONS_APP_AI = async <T>({
   ID_INSPECCION,
 }: {
@@ -301,6 +343,10 @@ export const CALL_PA_INSTRUCTIONS_APP_AI = async <T>({
       ID_INSPECCION,
     },
   }) as any;
+
+/** ___________Fin - SP - Pantalla instrucciones____________ */
+
+/** ___________SP - Pantalla fotos requeridas____________ */
 
 export const CALL_PA_STEP_THREE = async <T>(
   ID_INSPECCION: Number
@@ -349,8 +395,16 @@ export const CALL_PA_CONFIG_SCREEEN_HELP_STEP_3 = async <T>(
     }
   ) as any;
 
+/** ___________Fin - SP - Pantalla fotos requeridas____________ */
+
+/** ___________SP - Pantalla resumen____________ */
+
 export const CALL_PA_TEXT_INICIO_AI = async <T>(): StoreProcedure<T> =>
   db_instance.connection.query("PA_TEXT_INICIO_AI") as any;
+
+/** ___________Fin - SP - Pantalla resumen____________ */
+
+/** ___________SP - Pantalla daños____________ */
 
 export const CALL_PA_STEP_FOUR = async <T>(
   ID_INSPECTION: Number
@@ -385,17 +439,5 @@ export const CALL_PA_ELEMENTS_STRUCTURE_STEP_4 = async <T>(
     }
   ) as any;
 };
-export const CALL_PA_FINISH_INSPECTION_APP_AI = async <T>(
-  ID_INSPECCION: Number,
-  EMAIL: String
-): StoreProcedure<T> => {
-  return db_instance.connection.query(
-    "EXEC PA_FINISH_INSPECTION_APP_AI  :ID_INSPECCION, :EMAIL",
-    {
-      replacements: {
-        ID_INSPECCION,
-        EMAIL,
-      },
-    }
-  ) as any;
-};
+
+/** ___________Fin - SP - Pantalla daños____________ */
