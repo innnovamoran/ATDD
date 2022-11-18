@@ -19,6 +19,9 @@ export interface UploadFile {
 }
 export interface ContextLET extends Request {
   inspection?: PayloadGenerateToken;
+  appname: String;
+  appversion: String;
+  plataform: String;
 }
 
 export default class ServerExpress {
