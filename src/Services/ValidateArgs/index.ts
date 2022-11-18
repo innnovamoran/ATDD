@@ -60,9 +60,17 @@ const ValidateFildsForms = ({
   if (!isTypeNumber(ID_CAMPO)) {
     throw new Error("ID de accesorio debe ser numérico");
   }
-  if (!isTypeBoolean(VALUE)) {
-    throw new Error("Valor de selección debe ser boolean");
+  if (typeof VALUE == "boolean")
+  {
+    if (!isTypeBoolean(VALUE)) {
+      throw new Error("Valor de selección debe ser boolean");
+    }
+  } else {
+    if (!isTypeString(VALUE)) {
+      throw new Error("Valor de selección debe ser string");
+    }
   }
+  
   return;
 };
 

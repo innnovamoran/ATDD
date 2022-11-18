@@ -40,6 +40,9 @@ export class Inspection {
     const inspection = ResponseSP2D<InspectionSchema>(
       await CALL_PA_LOGIN_AI_V2(args)
     );
+    if (inspection.id === 0) {
+      throw new Error(inspection.MSJ as string);
+    }
     return {
       ...inspection,
       theme: ResponseSP2D<ThemeSchema>(
