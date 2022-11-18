@@ -1,4 +1,5 @@
-import { Args, Query, Resolver, Mutation } from "type-graphql";
+import { Args, Query, Resolver, Mutation, UseMiddleware, Ctx } from "type-graphql";
+import { ContextLET } from "../..";
 
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
 import { startInspectionArgs } from "../../../Core/Schemas/Inputs/startInspectionArgs";
@@ -19,9 +20,11 @@ import {
   ValidateStartInspectionArgs,
 } from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
+import { ValidatorAppConfig } from "../../Middleware/ValidatorAppConfig";
 
 @Resolver()
 export class Inspection {
+  @UseMiddleware(ValidatorAppConfig)
   @Query((returns) => InspectionSchema, {
     name: "Inspection",
     description:
@@ -29,7 +32,9 @@ export class Inspection {
   })
   async Inspection(
     @Args()
-    args: getInspectionArgs
+    args: getInspectionArgs,
+    @Ctx()
+    ctx: ContextLET
   ) {
     ValidateInspectionsArgs(args);
     const inspection = ResponseSP2D<InspectionSchema>(
@@ -38,7 +43,11 @@ export class Inspection {
     return {
       ...inspection,
       theme: ResponseSP2D<ThemeSchema>(
-        await CALL_PA_THEME({ ID_INSPECCION: inspection.id })
+        await CALL_PA_THEME(inspection.id, {
+          appname: ctx.appname,
+          appversion: ctx.appversion,
+          plataform: ctx.plataform
+        })
       ),
     };
   }
@@ -68,14 +77,21 @@ export class Inspection {
     );
   }
 
+  @UseMiddleware(ValidatorAppConfig)
   @Query((returns) => LoginSchema, {
     name: "Login",
     description:
       "Query que obtiene la estructura para la pantalla de inicio sesión",
   })
-  async Login() {
+  async Login(
+    @Ctx() ctx: ContextLET
+  ) {
     return ResponseSP2D<LoginSchema>(
-      await CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>()
+      await CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>({
+        appname: ctx.appname,
+        appversion: ctx.appversion,
+        plataform: ctx.plataform,
+      })
     );
   }
 }

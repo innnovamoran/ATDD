@@ -315,19 +315,30 @@ export const CALL_PA_LOGIN_AI_V2 = async <T>({
     }
   ) as any;
 
-export const CALL_PA_THEME = async <T>({
-  ID_INSPECCION,
-}: {
-  ID_INSPECCION: Number;
-}): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_THEME_APP_AI :ID_INSPECCION", {
+export const CALL_PA_THEME = async <T>(
+  ID_INSPECCION: Number,
+  {
+    appname,
+    appversion,
+    plataform
+  }: appArgs): StoreProcedure<T> =>
+  db_instance.connection.query("EXEC PA_THEME_APP_AI :ID_INSPECCION,:appname,:appversion,:plataform", {
     replacements: {
       ID_INSPECCION,
+      appname,
+      appversion,
+      plataform
     },
   }) as any;
 
-export const CALL_PA_TEXT_LOGIN_APP_AI = async <T>(): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_TEXT_LOGIN_APP_AI") as any;
+export const CALL_PA_TEXT_LOGIN_APP_AI = async <T>({
+  appname,
+  appversion,
+  plataform,
+}: appArgs): StoreProcedure<T> =>
+  db_instance.connection.query("EXEC PA_TEXT_LOGIN_APP_AI :appname,:appversion,:plataform",
+    { replacements: { appname, appversion, plataform }, retry }
+  ) as any;
 
 /** ___________Fin - SP - Pantalla login____________ */
 
@@ -399,8 +410,15 @@ export const CALL_PA_CONFIG_SCREEEN_HELP_STEP_3 = async <T>(
 
 /** ___________SP - Pantalla resumen____________ */
 
-export const CALL_PA_TEXT_INICIO_AI = async <T>(): StoreProcedure<T> =>
-  db_instance.connection.query("PA_TEXT_INICIO_AI") as any;
+export const CALL_PA_TEXT_INICIO_AI = async <T>({
+  appname,
+  appversion,
+  plataform,
+}: appArgs): StoreProcedure<T> =>
+  db_instance.connection.query(
+    "PA_TEXT_INICIO_AI :appname,:appversion,:plataform",
+    { replacements: { appname, appversion, plataform }, retry }
+  ) as any;
 
 /** ___________Fin - SP - Pantalla resumen____________ */
 
