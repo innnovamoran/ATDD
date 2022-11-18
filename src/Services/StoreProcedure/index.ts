@@ -1,4 +1,5 @@
 import { accesoriesArgs } from "../../Core/Schemas/Inputs/accesoriesArgs";
+import { appArgs } from "../../Core/Schemas/Inputs/appArgs";
 import { getInspectionArgs } from "../../Core/Schemas/Inputs/getInspectionArgs";
 import {
   DamageArgs,
@@ -9,7 +10,32 @@ import {
 import { featureArgs } from "../../Core/Schemas/Inputs/setFeaturesArgs";
 import ORM from "../../Server/Config/DataSource";
 const db_instance = new ORM();
+/** reintetos de petición a query */
+var retry = { max: 3 };
 type StoreProcedure<T> = Promise<Array<Array<T>>>;
+
+/** SP pantalla onboarding */
+export const CALL_PA_WELCOME_CAROUSEL = <T>({
+  appname,
+  appversion,
+  plataform,
+}: appArgs): StoreProcedure<T> =>
+  db_instance.connection.query(
+    "EXEC PA_WELCOME_CAROUSEL :appname,:appversion,:plataform",
+    { replacements: { appname, appversion, plataform }, retry }
+  ) as any;
+/** SP pantalla onboarding */
+export const CALL_PA_STRUCTURE_CAROUSEL = <T>({
+  appname,
+  appversion,
+  plataform,
+}: appArgs): StoreProcedure<T> =>
+  db_instance.connection.query(
+    "EXEC PA_STRUCTURE_CAROUSEL :appname,:appversion,:plataform",
+    { replacements: { appname, appversion, plataform }, retry }
+  ) as any;
+
+/** ___________Fin - Pantalla onboarding____________ */
 
 export const CALL_PA_STEP_TWO = async <T>(
   ID_INSPECTION: Number
@@ -249,7 +275,7 @@ export const CALL_PA_LOGIN_AI_V2 = async <T>({
         PLATAFORM,
       },
     }
-  ) as any; // any aun por no tipar de forma correcta la respuesta de query
+  ) as any;
 
 export const CALL_PA_THEME = async <T>({
   ID_INSPECCION,
@@ -275,12 +301,6 @@ export const CALL_PA_INSTRUCTIONS_APP_AI = async <T>({
       ID_INSPECCION,
     },
   }) as any;
-
-export const CALL_PA_WELCOME_CAROUSEL = <T>(): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_WELCOME_CAROUSEL") as any;
-
-export const CALL_PA_STRUCTURE_CAROUSEL = <T>(): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_STRUCTURE_CAROUSEL") as any;
 
 export const CALL_PA_STEP_THREE = async <T>(
   ID_INSPECCION: Number
@@ -332,13 +352,15 @@ export const CALL_PA_CONFIG_SCREEEN_HELP_STEP_3 = async <T>(
 export const CALL_PA_TEXT_INICIO_AI = async <T>(): StoreProcedure<T> =>
   db_instance.connection.query("PA_TEXT_INICIO_AI") as any;
 
-export const CALL_PA_STEP_FOUR = async <T>(ID_INSPECTION: Number): StoreProcedure<T> => {
+export const CALL_PA_STEP_FOUR = async <T>(
+  ID_INSPECTION: Number
+): StoreProcedure<T> => {
   return db_instance.connection.query("EXEC PA_STEP_FOUR :ID_INSPECTION", {
     replacements: { ID_INSPECTION },
   }) as any;
-}
+};
 
-export const CALL_PA_STRUCTURE_STEP_4 = async<T>(
+export const CALL_PA_STRUCTURE_STEP_4 = async <T>(
   ID_INSPECTION: Number
 ): StoreProcedure<T> => {
   return db_instance.connection.query(
@@ -347,34 +369,33 @@ export const CALL_PA_STRUCTURE_STEP_4 = async<T>(
       replacements: { ID_INSPECTION },
     }
   ) as any;
-}
+};
 
-export const CALL_PA_ELEMENTS_STRUCTURE_STEP_4 = async<T>(
+export const CALL_PA_ELEMENTS_STRUCTURE_STEP_4 = async <T>(
   ID_INSPECCION: Number,
-  ID_STRUCTURE_STEP_4: Number,
+  ID_STRUCTURE_STEP_4: Number
 ): StoreProcedure<T> => {
   return db_instance.connection.query(
     "EXEC PA_ELEMENTS_STRUCTURE_STEP_4  :ID_INSPECCION, :ID_STRUCTURE_STEP_4",
     {
-      replacements: { 
-        ID_INSPECCION, 
-        ID_STRUCTURE_STEP_4 
+      replacements: {
+        ID_INSPECCION,
+        ID_STRUCTURE_STEP_4,
       },
     }
   ) as any;
-}
-
-export const CALL_PA_FINISH_INSPECTION_APP_AI = async<T>(
+};
+export const CALL_PA_FINISH_INSPECTION_APP_AI = async <T>(
   ID_INSPECCION: Number,
-  EMAIL: String,
+  EMAIL: String
 ): StoreProcedure<T> => {
   return db_instance.connection.query(
     "EXEC PA_FINISH_INSPECTION_APP_AI  :ID_INSPECCION, :EMAIL",
     {
-      replacements: { 
-        ID_INSPECCION, 
-        EMAIL
+      replacements: {
+        ID_INSPECCION,
+        EMAIL,
       },
     }
   ) as any;
-}
+};

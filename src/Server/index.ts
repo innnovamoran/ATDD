@@ -1,11 +1,11 @@
 import "reflect-metadata";
-import express, { Express, Request, Response } from "express";
-import { graphqlHTTP, getGraphQLParams } from "express-graphql";
+import express, { Express, Request } from "express";
+import { graphqlHTTP } from "express-graphql";
 import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
-import helmet from "helmet";
-import HandleDataBase from "./Config/DataSource";
 import { PayloadGenerateToken } from "../Services/Auth";
+import HandleDataBase from "./Config/DataSource";
+import helmet from "helmet";
 
 import multer from "multer";
 import HandleAws from "./Config/Aws";
@@ -15,7 +15,6 @@ export interface UploadFile {
   filename: string;
   mimetype: string;
   encoding: string;
-  //  createReadStream:()=>Stream;
 }
 export interface ContextLET extends Request {
   inspection?: PayloadGenerateToken;
