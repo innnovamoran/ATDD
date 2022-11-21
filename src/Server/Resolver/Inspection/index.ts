@@ -1,3 +1,4 @@
+import { isEmpty } from "class-validator";
 import { Args, Query, Resolver, Mutation, UseMiddleware, Ctx } from "type-graphql";
 import { ContextLET } from "../..";
 
@@ -36,6 +37,9 @@ export class Inspection {
     @Ctx()
     ctx: ContextLET
   ) {
+    if (isEmpty(args.TOKEN_FIREBASE)) {
+      args.TOKEN_FIREBASE = "Inexistente";
+    }
     ValidateInspectionsArgs(args);
     const inspection = ResponseSP2D<InspectionSchema>(
       await CALL_PA_LOGIN_AI_V2(args)
