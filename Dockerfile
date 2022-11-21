@@ -14,8 +14,6 @@ WORKDIR /app
 COPY --from=build /app* ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/bundle ./bundle
-COPY --from=build /app/src/Core/Migrations ./Migrations
-COPY --from=build /app/src/Core/Seeder ./Seeder
 COPY --from=build /app/src/Server/Config/Sequelize ./Config
 
 RUN rm -rf ./src
