@@ -60,8 +60,7 @@ const ValidateFildsForms = ({
   if (!isTypeNumber(ID_CAMPO)) {
     throw new Error("ID de accesorio debe ser numérico");
   }
-  if (typeof VALUE == "boolean")
-  {
+  if (typeof VALUE == "boolean") {
     if (!isTypeBoolean(VALUE)) {
       throw new Error("Valor de selección debe ser boolean");
     }
@@ -70,7 +69,7 @@ const ValidateFildsForms = ({
       throw new Error("Valor de selección debe ser string");
     }
   }
-  
+
   return;
 };
 
@@ -103,10 +102,8 @@ const ValidateUploadDocumentsArgs = (args: unknown) => {
 const ValidateUploadVideoArgs = (args: unknown) => {
   const r = args as VideoArgs;
   if (
-    (!isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
-      !isTypeNumber(r.ID_STRUCTURE_STEP_3)) ||
-    (!isNotEmpty(r.LONGITUDE) && !isTypeNumber(r.LONGITUDE)) ||
-    (!isNotEmpty(r.MIME) && !isTypeString(r.MIME))
+    !isNotEmpty(r.ID_STRUCTURE_STEP_3) &&
+    !isTypeNumber(r.ID_STRUCTURE_STEP_3)
   ) {
     throw new Error("Uno o más argumentos faltan en la solicitud");
   }
@@ -168,7 +165,11 @@ export const ValidateIDNumber = (ID: unknown): Number => {
   return ID as Number;
 };
 export const ValidateEmail = (EMAIL: unknown): String => {
-  if(typeof EMAIL === "undefined" || typeof EMAIL !== "string" || !isEmail(EMAIL)) {
+  if (
+    typeof EMAIL === "undefined" ||
+    typeof EMAIL !== "string" ||
+    !isEmail(EMAIL)
+  ) {
     throw new Error("EMAIL incorrecto");
   }
   return EMAIL as String;
