@@ -44,16 +44,16 @@ export class Inspection {
     @Ctx()
     ctx: ContextLET
   ) {
-    if (isEmpty(args.TOKEN_FIREBASE)) {
-      args.TOKEN_FIREBASE = "Inexistente";
-    }
     ValidateInspectionsArgs(args);
+
+    const appC = {
+      appname: ctx.appname,
+      appversion: ctx.appversion,
+      plataform: ctx.plataform,
+    };
+
     const inspection = ResponseSP2D<InspectionSchema>(
-      await CALL_PA_LOGIN_AI_V2(args, {
-        appname: ctx.appname,
-        appversion: ctx.appversion,
-        plataform: ctx.plataform,
-      })
+      await CALL_PA_LOGIN_AI_V2(args, appC)
     );
     if (inspection.id === 0) {
       throw new Error(inspection.MSJ as string);
@@ -61,11 +61,7 @@ export class Inspection {
     return {
       ...inspection,
       theme: ResponseSP2D<ThemeSchema>(
-        await CALL_PA_THEME(inspection.id, {
-          appname: ctx.appname,
-          appversion: ctx.appversion,
-          plataform: ctx.plataform,
-        })
+        await CALL_PA_THEME(inspection.id, appC)
       ),
     };
   }
