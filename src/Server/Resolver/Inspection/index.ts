@@ -1,5 +1,12 @@
 import { isEmpty } from "class-validator";
-import { Args, Query, Resolver, Mutation, UseMiddleware, Ctx } from "type-graphql";
+import {
+  Args,
+  Query,
+  Resolver,
+  Mutation,
+  UseMiddleware,
+  Ctx,
+} from "type-graphql";
 import { ContextLET } from "../..";
 
 import { getInspectionArgs } from "../../../Core/Schemas/Inputs/getInspectionArgs";
@@ -42,7 +49,11 @@ export class Inspection {
     }
     ValidateInspectionsArgs(args);
     const inspection = ResponseSP2D<InspectionSchema>(
-      await CALL_PA_LOGIN_AI_V2(args)
+      await CALL_PA_LOGIN_AI_V2(args, {
+        appname: ctx.appname,
+        appversion: ctx.appversion,
+        plataform: ctx.plataform,
+      })
     );
     if (inspection.id === 0) {
       throw new Error(inspection.MSJ as string);
@@ -53,7 +64,7 @@ export class Inspection {
         await CALL_PA_THEME(inspection.id, {
           appname: ctx.appname,
           appversion: ctx.appversion,
-          plataform: ctx.plataform
+          plataform: ctx.plataform,
         })
       ),
     };
@@ -90,9 +101,7 @@ export class Inspection {
     description:
       "Query que obtiene la estructura para la pantalla de inicio sesión",
   })
-  async Login(
-    @Ctx() ctx: ContextLET
-  ) {
+  async Login(@Ctx() ctx: ContextLET) {
     return ResponseSP2D<LoginSchema>(
       await CALL_PA_TEXT_LOGIN_APP_AI<LoginSchema>({
         appname: ctx.appname,

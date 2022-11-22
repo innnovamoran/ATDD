@@ -42,22 +42,4 @@ export class getInspectionArgs {
     description: "Token FCM para envio de notificaciónes push",
   })
   TOKEN_FIREBASE!: String;
-
-  @Field((type) => String, {
-    nullable: false,
-    description: "Aplicación en uso (FID-LET)",
-  })
-  APPNAME!: String;
-
-  @Field((type) => String, {
-    nullable: false,
-    description: "Versiónado de la aplicación movil.",
-  })
-  APPVERSION!: String;
-
-  @Field((type) => String, {
-    nullable: false,
-    description: "Plataforma que usa el sistema.",
-  })
-  PLATAFORM!: String;
 }
