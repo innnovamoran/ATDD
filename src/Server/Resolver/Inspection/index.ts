@@ -1,4 +1,5 @@
 import { isEmpty } from "class-validator";
+import console from "console";
 import {
   Args,
   Query,
@@ -55,6 +56,10 @@ export class Inspection {
     const inspection = ResponseSP2D<InspectionSchema>(
       await CALL_PA_LOGIN_AI_V2(args, appC)
     );
+
+    if (typeof inspection.to_fix === "string") {
+      inspection.to_fix = [];
+    }
     if (inspection.id === 0) {
       throw new Error(inspection.MSJ as string);
     }
