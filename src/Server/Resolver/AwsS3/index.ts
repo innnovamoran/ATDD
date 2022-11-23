@@ -46,7 +46,7 @@ type SpGetNameVideo = {
 
 type spGenerictNameFile = { MSJ: string; name: string };
 interface factoryUpload {
-  [key: string]: (ctx: ContextLET) => Promise<SpGetName | SpGetNameVideo>;
+  [key: string]: (ctx: ContextLET) => Promise<SpGetName>;
 }
 
 @Resolver()
@@ -112,7 +112,7 @@ export class AwsS3 {
 
   handleUploadVideo = async (ctx: ContextLET) =>
     ResponseSP2D(
-      await CALL_PA_INGRESA_VIDEO_STEP_3<SpGetNameVideo>({
+      await CALL_PA_INGRESA_VIDEO_STEP_3<SpGetName>({
         OI: ctx.inspection?.ID_INSPECTION ? ctx.inspection.ID_INSPECTION : 0,
         ID_STRUCTURE_STEP_3: ctx.body.ID_STRUCTURE_STEP_3,
         LATITUDE: ctx.body.LATITUE,
@@ -123,7 +123,7 @@ export class AwsS3 {
 
   factoryUploadFile = (
     type: string
-  ): ((ctx: ContextLET) => Promise<SpGetName | SpGetNameVideo>) => {
+  ): ((ctx: ContextLET) => Promise<SpGetName>) => {
     const factory: factoryUpload = {
       photo: this.handleUploadPhoto,
       damage: this.handleUploadDamage,
@@ -134,17 +134,9 @@ export class AwsS3 {
     return factory[type];
   };
 
-  handleGetName(
-    response: SpGetName | SpGetNameVideo,
-    SECTION: String
-  ): spGenerictNameFile {
-    if (SECTION === "video") {
-      const r = response as SpGetNameVideo;
-      return { MSJ: r.MSJ, name: r.NOMBRE_VIDEO };
-    } else {
-      const r = response as SpGetName;
-      return { MSJ: r.MSJ, name: r.NOMBRE_IMG };
-    }
+  handleGetName(response: SpGetName): spGenerictNameFile {
+    const r = response as SpGetName;
+    return { MSJ: r.MSJ, name: r.NOMBRE_IMG };
   }
 
   @UseMiddleware(InspectionAccess)
@@ -159,10 +151,8 @@ export class AwsS3 {
     const { buffer } = ctx.file as FileUpload;
 
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
-
     const response: spGenerictNameFile = this.handleGetName(
-      await this.factoryUploadFile(ctx.body.SECTION)(ctx),
-      ctx.body.SECTION
+      await this.factoryUploadFile(ctx.body.SECTION)(ctx)
     );
 
     if (response.MSJ !== "Ok") {
