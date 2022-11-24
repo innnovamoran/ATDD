@@ -156,7 +156,7 @@ export class AwsS3 {
     );
 
     if (response.MSJ !== "Ok") {
-      throw new Error(response.name);
+      throw new Error(`${response.MSJ}, ${response.name}`);
     }
 
     const isUpload = await uploadFileToBucket({
@@ -166,7 +166,7 @@ export class AwsS3 {
     });
 
     if (typeof isUpload === "undefined") {
-      throw new Error("Error al subir archivo");
+      throw new Error("Error en carga de archivo, intente nuevamente");
     }
     return isUpload;
   }

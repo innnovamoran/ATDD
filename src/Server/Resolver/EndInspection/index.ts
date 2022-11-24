@@ -1,11 +1,21 @@
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 
 import { ResponseSP, ResponseSP2D } from "../../../Services/ValidateSP";
 import { ContextLET } from "../..";
 import { InspectionAccess } from "../../Middleware/InspectionAccess";
 import { EndInspection as EndInspectionSchema } from "../../../Core/Schemas/Screen/EndInspection";
 import { TermsAndConditions as TermsAndConditionsSchema } from "../../../Core/Schemas/Screen/EndInspection/TermsAndContitions";
-import { ValidateEmail, ValidateIDInspection } from "../../../Services/ValidateArgs";
+import {
+  ValidateEmail,
+  ValidateIDInspection,
+} from "../../../Services/ValidateArgs";
 import {
   CALL_PA_CONDITIONS_STEP_5,
   CALL_PA_FINISH_INSPECTION_APP_AI,
@@ -39,17 +49,19 @@ export class EndInspection {
     name: "FinishInspection",
     description: "Mutación que finaliza la autoinspección",
   })
-  async FinishInspection(
-    @Arg("EMAIL") EMAIL: String,
-    @Ctx() ctx: ContextLET
-    ) {
+  async FinishInspection(@Arg("EMAIL") EMAIL: String, @Ctx() ctx: ContextLET) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     const EMAIL_VALIDATED = ValidateEmail(EMAIL);
-    const response = ResponseSP2D(await CALL_PA_FINISH_INSPECTION_APP_AI<{ MSJ: string }>(ID_INSPECTION, EMAIL_VALIDATED));
+    const response = ResponseSP2D(
+      await CALL_PA_FINISH_INSPECTION_APP_AI<{ MSJ: string }>(
+        ID_INSPECTION,
+        EMAIL_VALIDATED
+      )
+    );
     if (response.MSJ === "Ok") {
       return "Inspección finalizada con éxito";
     } else {
-      throw new Error("Error al finalizar inspección");
+      throw new Error(response.MSJ);
     }
   }
 
