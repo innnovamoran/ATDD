@@ -49,12 +49,16 @@ export class Photos {
     @Ctx() ctx: ContextLET
   ) {
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
-    return ResponseSP2D(
-      await CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
-        ValidateIDNumber(ID_STRUCTURE_STEP_3),
-        ID_INSPECTION
-      )
-    );
+    return {
+      ...ResponseSP2D(
+        await CALL_PA_VALIDATIONS_STEP_3<PhotosValidationsSchema>(
+          ValidateIDNumber(ID_STRUCTURE_STEP_3),
+          ID_INSPECTION
+        )
+      ),
+      video_active: ID_STRUCTURE_STEP_3 == 1,
+      video_duration: 60000,
+    };
   }
 
   @UseMiddleware(InspectionAccess)

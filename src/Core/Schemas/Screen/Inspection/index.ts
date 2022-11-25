@@ -1,6 +1,15 @@
 import { Field, ObjectType } from "type-graphql";
 import { Theme } from "../../Theme";
+import { Resume } from "../Resume";
 
+@ObjectType({ description: "Listado de fotos a corregir" })
+export class ToFix {
+  @Field((type) => String, {
+    description: "Nombre de fotos a corregir",
+    nullable: true,
+  })
+  name!: String;
+}
 @ObjectType({ description: "Obtener inspección a realizar" })
 export class Inspection {
   @Field((type) => Number, {
@@ -108,11 +117,11 @@ export class Inspection {
     nullable: true,
   })
   business_week!: String;
-  @Field((type) => String, {
+  @Field((type) => [ToFix], {
     description: "Inspección de tipo FIX",
     nullable: true,
   })
-  to_fix!: String;
+  to_fix!: ToFix[];
   @Field((type) => Number, {
     description: "Inspección activa",
     nullable: true,
@@ -123,4 +132,9 @@ export class Inspection {
     description: "Tema de inspección por ID",
   })
   theme!: Theme;
+  @Field((type) => [Resume], {
+    nullable: true,
+    description: "Estructura modal resumen",
+  })
+  resume!: Resume[];
 }

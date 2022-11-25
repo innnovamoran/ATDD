@@ -1,6 +1,6 @@
 {
   "name": "let-api-nodejs",
-  "version": "v1.0.0-beta",
+  "version": "v1.0.2-beta",
   "description": "GraphQL LET",
   "main": "index.js",
   "license": "MIT",

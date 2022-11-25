@@ -285,18 +285,18 @@ export const CALL_PA_ACTUALIZA_CARACTERISTICAS_APP = async <T>(
 
 /** ___________SP - Pantalla login____________ */
 
-export const CALL_PA_LOGIN_AI_V2 = async <T>({
-  APPNAME,
-  APPVERSION,
-  INTERNET_PROVIDER,
-  PATENTE,
-  PHONE_BRAND,
-  PHONE_MODEL,
-  PHONE_SO,
-  PLATAFORM,
-  RUT,
-  TOKEN_FIREBASE,
-}: getInspectionArgs): StoreProcedure<T> =>
+export const CALL_PA_LOGIN_AI_V2 = async <T>(
+  {
+    INTERNET_PROVIDER,
+    PATENTE,
+    PHONE_BRAND,
+    PHONE_MODEL,
+    PHONE_SO,
+    RUT,
+    TOKEN_FIREBASE,
+  }: getInspectionArgs,
+  { appname, appversion, plataform }: appArgs
+): StoreProcedure<T> =>
   db_instance.connection.query(
     `EXEC PA_LOGIN_AI_V2 :RUT,:PATENTE,:PHONE_MODEL,:PHONE_BRAND,:PHONE_SO,:INTERNET_PROVIDER,:TOKEN_FIREBASE,:APPNAME,:APPVERSION,:PLATAFORM`,
     {
@@ -308,35 +308,36 @@ export const CALL_PA_LOGIN_AI_V2 = async <T>({
         PHONE_SO,
         INTERNET_PROVIDER,
         TOKEN_FIREBASE,
-        APPNAME,
-        APPVERSION,
-        PLATAFORM,
+        APPNAME: appname,
+        APPVERSION: appversion,
+        PLATAFORM: plataform,
       },
     }
   ) as any;
 
 export const CALL_PA_THEME = async <T>(
   ID_INSPECCION: Number,
-  {
-    appname,
-    appversion,
-    plataform
-  }: appArgs): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_THEME_APP_AI :ID_INSPECCION,:appname,:appversion,:plataform", {
-    replacements: {
-      ID_INSPECCION,
-      appname,
-      appversion,
-      plataform
-    },
-  }) as any;
+  { appname, appversion, plataform }: appArgs
+): StoreProcedure<T> =>
+  db_instance.connection.query(
+    "EXEC PA_THEME_APP_AI :ID_INSPECCION,:appname,:appversion,:plataform",
+    {
+      replacements: {
+        ID_INSPECCION,
+        appname,
+        appversion,
+        plataform,
+      },
+    }
+  ) as any;
 
 export const CALL_PA_TEXT_LOGIN_APP_AI = async <T>({
   appname,
   appversion,
   plataform,
 }: appArgs): StoreProcedure<T> =>
-  db_instance.connection.query("EXEC PA_TEXT_LOGIN_APP_AI :appname,:appversion,:plataform",
+  db_instance.connection.query(
+    "EXEC PA_TEXT_LOGIN_APP_AI :appname,:appversion,:plataform",
     { replacements: { appname, appversion, plataform }, retry }
   ) as any;
 

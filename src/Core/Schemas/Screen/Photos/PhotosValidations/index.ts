@@ -34,4 +34,14 @@ export class PhotosValidations {
     description: "Máximo de archivos a seleccionar",
   })
   pick_files!: Number;
+  @Field((type) => Boolean, {
+    nullable: true,
+    description: "Foto requerida permite grabar videos",
+  })
+  video_active!: Boolean;
+  @Field((type) => Number, {
+    nullable: true,
+    description: "Máximo de tiempo de video expresado en milisegundos",
+  })
+  video_duration!: Number;
 }

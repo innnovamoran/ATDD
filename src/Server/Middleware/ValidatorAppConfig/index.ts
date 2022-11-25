@@ -7,7 +7,11 @@ export const ValidatorAppConfig: MiddlewareFn<ContextLET> = async (
   next
 ) => {
   try {
-    if(!isNotEmpty(context.headers.appname) || !isNotEmpty(context.headers.appversion) || !isNotEmpty(context.headers.plataform)) {
+    if (
+      !isNotEmpty(context.headers.appname) ||
+      !isNotEmpty(context.headers.appversion) ||
+      !isNotEmpty(context.headers.plataform)
+    ) {
       throw new Error("Cliente no autorizado");
     }
     context.appname = context.headers.appname as String;
@@ -17,4 +21,4 @@ export const ValidatorAppConfig: MiddlewareFn<ContextLET> = async (
   } catch (error: string | any) {
     throw new Error(error);
   }
-}
+};

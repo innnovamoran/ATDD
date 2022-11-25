@@ -18,6 +18,7 @@ import { featureArgs } from "../../../Core/Schemas/Inputs/setFeaturesArgs";
 import {
   ValidateFormsArgs,
   ValidateIDInspection,
+  ValidateIDNumber,
 } from "../../../Services/ValidateArgs";
 
 import {
@@ -55,6 +56,7 @@ export class Feature {
     @Arg("ID_STRUCTURE_STEP_1") ID_STRUCTURE_STEP_1: number,
     @Ctx() ctx: ContextLET
   ) {
+    ValidateIDNumber(ID_STRUCTURE_STEP_1);
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
     return ResponseSP<FeatureOptionsSchema>(
       await CAL_PA_OPTIONS_STRUCTURE_STEP_1<FeatureOptionsSchema>(
@@ -73,16 +75,20 @@ export class Feature {
   async UpdateFeature(@Args() args: featureArgs, @Ctx() ctx: ContextLET) {
     ValidateFormsArgs(args);
     const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
+    console.log(ID_INSPECTION, args);
+
     const response = ResponseSP2D(
       await CALL_PA_ACTUALIZA_CARACTERISTICAS_APP<{ MSJ: string }>(
         ID_INSPECTION,
         args
       )
     );
+    console.log(response.MSJ);
+
     if (response.MSJ === "Ok") {
       return "Actualización realizada con éxito";
     } else {
-      throw new Error("Error al actualizar caracteristicas");
+      throw new Error(response.MSJ);
     }
   }
 }
