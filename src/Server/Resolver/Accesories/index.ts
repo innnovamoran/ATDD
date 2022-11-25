@@ -56,7 +56,7 @@ export class Accesories {
     if (response.MSJ === "Ok") {
       return "Actualización realizada con éxito";
     } else {
-      throw new Error("Error al actualizar accesorios");
+      throw new Error(response.MSJ);
     }
   }
 }
