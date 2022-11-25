@@ -29,6 +29,7 @@ import {
   CALL_PA_THEME,
 } from "../../../Services/StoreProcedure";
 import {
+  ValidateIDInspection,
   ValidateInspectionsArgs,
   ValidateStartInspectionArgs,
 } from "../../../Services/ValidateArgs";
@@ -40,6 +41,7 @@ import { Accesories as AccesoriesSchema } from "../../../Core/Schemas/Screen/Acc
 import { Photos as PhotosSchema } from "../../../Core/Schemas/Screen/Photos";
 import { Damage as DamageSchema } from "../../../Core/Schemas/Screen/Damage";
 import { Resume as ResumeSchema } from "../../../Core/Schemas/Screen/Resume";
+import { InspectionAccess } from "../../Middleware/InspectionAccess";
 
 @Resolver()
 export class Inspection {
@@ -66,21 +68,6 @@ export class Inspection {
     const inspection = ResponseSP2D<InspectionSchema>(
       await CALL_PA_LOGIN_AI_V2(args, appC)
     );
-    const response = await Promise.all([
-      CALL_PA_STEP_ONE<FeatureSchema>(inspection.id),
-      CALL_PA_STEP_TWO<AccesoriesSchema>(inspection.id),
-      CALL_PA_STEP_THREE<PhotosSchema>(inspection.id),
-      CALL_PA_STEP_FOUR<DamageSchema>(inspection.id),
-    ]);
-
-    const ResumenSchema: ResumeSchema[] = response
-      .concat()
-      .map((d) =>
-        ResponseSP2D<
-          FeatureSchema | AccesoriesSchema | PhotosSchema | DamageSchema
-        >(d)
-      )
-      .map((d, i) => ({ title: d.title, id: i + 1 }));
 
     if (typeof inspection.to_fix === "string") {
       inspection.to_fix = [];
@@ -93,7 +80,6 @@ export class Inspection {
       theme: ResponseSP2D<ThemeSchema>(
         await CALL_PA_THEME(inspection.id, appC)
       ),
-      resume: ResumenSchema,
     };
   }
 
@@ -136,5 +122,30 @@ export class Inspection {
         plataform: ctx.plataform,
       })
     );
+  }
+
+  @UseMiddleware(InspectionAccess)
+  @Query((returns) => [ResumeSchema], {
+    name: "GetResumeStructure",
+    description:
+      "Query que obtiene la estructura para la pantalla de inicio sesión",
+  })
+  async GetResumeStructure(@Ctx() ctx: ContextLET) {
+    const ID_INSPECTION = ValidateIDInspection(ctx.inspection?.ID_INSPECTION);
+    const response = await Promise.all([
+      CALL_PA_STEP_ONE<FeatureSchema>(ID_INSPECTION),
+      CALL_PA_STEP_TWO<AccesoriesSchema>(ID_INSPECTION),
+      CALL_PA_STEP_THREE<PhotosSchema>(ID_INSPECTION),
+      CALL_PA_STEP_FOUR<DamageSchema>(ID_INSPECTION),
+    ]);
+
+    return response
+      .concat()
+      .map((d) =>
+        ResponseSP2D<
+          FeatureSchema | AccesoriesSchema | PhotosSchema | DamageSchema
+        >(d)
+      )
+      .map((d, i) => ({ title: d.title, id: i + 1 }));
   }
 }
