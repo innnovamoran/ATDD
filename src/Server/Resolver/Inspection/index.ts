@@ -21,6 +21,10 @@ import { CreateDate } from "../../../Dependencies/useDate";
 import { GenerateToken } from "../../../Services/Auth";
 import {
   CALL_PA_LOGIN_AI_V2,
+  CALL_PA_STEP_FOUR,
+  CALL_PA_STEP_ONE,
+  CALL_PA_STEP_THREE,
+  CALL_PA_STEP_TWO,
   CALL_PA_TEXT_LOGIN_APP_AI,
   CALL_PA_THEME,
 } from "../../../Services/StoreProcedure";
@@ -30,6 +34,12 @@ import {
 } from "../../../Services/ValidateArgs";
 import { ResponseSP2D } from "../../../Services/ValidateSP";
 import { ValidatorAppConfig } from "../../Middleware/ValidatorAppConfig";
+
+import { Feature as FeatureSchema } from "../../../Core/Schemas/Screen/Feature";
+import { Accesories as AccesoriesSchema } from "../../../Core/Schemas/Screen/Accesories";
+import { Photos as PhotosSchema } from "../../../Core/Schemas/Screen/Photos";
+import { Damage as DamageSchema } from "../../../Core/Schemas/Screen/Damage";
+import { Resume as ResumeSchema } from "../../../Core/Schemas/Screen/Resume";
 
 @Resolver()
 export class Inspection {
@@ -56,6 +66,21 @@ export class Inspection {
     const inspection = ResponseSP2D<InspectionSchema>(
       await CALL_PA_LOGIN_AI_V2(args, appC)
     );
+    const response = await Promise.all([
+      CALL_PA_STEP_ONE<FeatureSchema>(inspection.id),
+      CALL_PA_STEP_TWO<AccesoriesSchema>(inspection.id),
+      CALL_PA_STEP_THREE<PhotosSchema>(inspection.id),
+      CALL_PA_STEP_FOUR<DamageSchema>(inspection.id),
+    ]);
+
+    const ResumenSchema: ResumeSchema[] = response
+      .concat()
+      .map((d) =>
+        ResponseSP2D<
+          FeatureSchema | AccesoriesSchema | PhotosSchema | DamageSchema
+        >(d)
+      )
+      .map((d, i) => ({ title: d.title, id: i + 1 }));
 
     if (typeof inspection.to_fix === "string") {
       inspection.to_fix = [];
@@ -68,6 +93,7 @@ export class Inspection {
       theme: ResponseSP2D<ThemeSchema>(
         await CALL_PA_THEME(inspection.id, appC)
       ),
+      resume: ResumenSchema,
     };
   }
 

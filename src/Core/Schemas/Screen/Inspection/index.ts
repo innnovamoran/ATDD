@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import { Theme } from "../../Theme";
+import { Resume } from "../Resume";
 
 @ObjectType({ description: "Listado de fotos a corregir" })
 export class ToFix {
@@ -131,4 +132,9 @@ export class Inspection {
     description: "Tema de inspección por ID",
   })
   theme!: Theme;
+  @Field((type) => [Resume], {
+    nullable: true,
+    description: "Estructura modal resumen",
+  })
+  resume!: Resume[];
 }
