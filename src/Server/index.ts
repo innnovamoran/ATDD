@@ -5,6 +5,7 @@ import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
 
 import helmet from "helmet";
+import MongooseDB from "./Config/Mongoose";
 
 export default class ServerExpress {
   port: Number;
@@ -29,11 +30,11 @@ export default class ServerExpress {
         graphiql: process.env.NODE_ENV === "develop",
       })
     );
-
     this.app.use(helmet());
   }
 
   start_server(callback: () => void) {
+    new MongooseDB().start_connection_db();
     this.useGraphql();
     this.app.listen(this.port, callback);
   }
