@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose";
 
 export type TProduct = {
-  bar_code: string;
-  name: string;
-  stock: number;
-  discount_percentage: number;
+  bar_code: String;
+  name: String;
+  stock: Number;
+  discount_percentage: Number;
+  price: Number;
 };
 
 export default model(
@@ -21,14 +22,20 @@ export default model(
     stock: {
       type: "number",
       required: false,
-      min: [0, "Mínimo de stock debe ser mayor a 0"],
-      default: 0,
+      min: [1, "Mínimo de stock debe ser mayor a 0"],
+      default: 1,
     },
     discount_percentage: {
       type: "number",
       required: false,
       min: 0,
       default: 0,
+    },
+    price: {
+      type: "number",
+      required: false,
+      min: [1, "Mínimo de valor debe ser mayor a 0"],
+      default: 1,
     },
   })
 );

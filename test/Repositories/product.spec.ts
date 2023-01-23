@@ -15,6 +15,7 @@ describe("Product Repo [Create]", () => {
       discount_percentage: 0,
       name: "",
       stock: -1,
+      price: 0,
     });
     if (isError instanceof Array<Ierrors>) {
       expect(typeof isError.find((error) => error.key === "name")).toEqual(
@@ -35,6 +36,12 @@ describe("Product Repo [Create]", () => {
       expect(isError.find((error) => error.key === "stock")?.message).toEqual(
         "Mínimo de stock debe ser mayor a 0"
       );
+      expect(typeof isError.find((error) => error.key === "price")).toEqual(
+        "object"
+      );
+      expect(isError.find((error) => error.key === "price")?.message).toEqual(
+        "Mínimo de valor debe ser mayor a 0"
+      );
     }
   });
   it("Should be handle name only error", async () => {
@@ -42,7 +49,8 @@ describe("Product Repo [Create]", () => {
       bar_code: "01010101",
       discount_percentage: 0,
       name: "",
-      stock: 0,
+      stock: 1,
+      price: 1,
     });
     if (isError instanceof Array<Ierrors>) {
       expect(typeof isError.find((error) => error.key === "name")).toEqual(
@@ -58,7 +66,8 @@ describe("Product Repo [Create]", () => {
       bar_code: "",
       discount_percentage: 0,
       name: "product",
-      stock: 0,
+      stock: 1,
+      price: 1,
     });
     if (isError instanceof Array<Ierrors>) {
       expect(typeof isError.find((error) => error.key === "bar_code")).toEqual(
@@ -75,6 +84,7 @@ describe("Product Repo [Create]", () => {
       discount_percentage: 0,
       name: "product",
       stock: -1,
+      price: 1,
     });
     if (isError instanceof Array<Ierrors>) {
       expect(typeof isError.find((error) => error.key === "stock")).toEqual(
@@ -85,12 +95,30 @@ describe("Product Repo [Create]", () => {
       );
     }
   });
+  it("Should be handle price only error", async () => {
+    const isError = await CreateProduct({
+      bar_code: "01010101",
+      discount_percentage: 0,
+      name: "product",
+      stock: 1,
+      price: -2,
+    });
+    if (isError instanceof Array<Ierrors>) {
+      expect(typeof isError.find((error) => error.key === "price")).toEqual(
+        "object"
+      );
+      expect(isError.find((error) => error.key === "price")?.message).toEqual(
+        "Mínimo de valor debe ser mayor a 0"
+      );
+    }
+  });
   it("Should be create new product", async () => {
     const isCreated = await CreateProduct({
       bar_code: "01010101",
       discount_percentage: 0,
       name: "product",
       stock: 10,
+      price: 1000,
     });
     if (isCreated instanceof Array<Ierrors> === false) {
       const product = isCreated as TProduct;
