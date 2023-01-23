@@ -7,7 +7,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import ServerExpress from "./Server/index";
-import { LOG_ERROR } from "./Core/Schemas/HandleLogError";
+import { LOG_ERROR } from "./Core/HandleLogError";
 
 if (!process.env.PORT) {
   process.exit(1);
