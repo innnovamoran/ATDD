@@ -3,9 +3,10 @@ module.exports = {
   testPathIgnorePatterns: [
     "__mocks__.*\\.(ts)$",
     "test/mock/.*\\.(ts)$",
-    "test/utils/.*\\.(ts)$",
+    "test/Utils/.*\\.(ts)$",
     "/node_modules/",
     "/coverage/",
     "/build/",
   ],
+  verbose: true,
 };

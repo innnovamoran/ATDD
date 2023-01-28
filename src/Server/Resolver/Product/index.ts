@@ -3,7 +3,7 @@ import { ErrorMongoose } from "../../../Core/GraphSchemas/ErrorMongoose";
 import { ProductGraphSchema } from "../../../Core/GraphSchemas/Product";
 import { ProductArgs } from "../../../Core/GraphSchemas/Product/Args";
 import { CreateProduct } from "../../../Core/Repositories/Product/index";
-@Resolver(() => ProductGraphSchema)
+@Resolver()
 export class ProductResolver {
   @Mutation((returns) => ProductGraphSchema || ErrorMongoose, {
     name: "addNewProduct",
