@@ -1,4 +1,6 @@
 module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "node",
   testRegex: "test/.*\\.(ts)$",
   testPathIgnorePatterns: [
     "__mocks__.*\\.(ts)$",
@@ -9,4 +11,5 @@ module.exports = {
     "/build/",
   ],
   verbose: true,
+  bail: 1,
 };

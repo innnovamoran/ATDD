@@ -1,6 +1,5 @@
 import MongooseDB from "../../src/Server/Config/Mongoose";
 import { CreateProduct } from "../../src/Core/Repositories/Product";
-import { Ierrors } from "../../src/Helper/HandleErrorMongoose";
 import { TProduct } from "../../src/Core/Repositories/Product/ProductSchema";
 
 const db = new MongooseDB();
@@ -17,7 +16,7 @@ describe("Product Repo [Create]", () => {
       stock: -1,
       price: 0,
     });
-    if (isError instanceof Array<Ierrors>) {
+    if (Array.isArray(isError)) {
       expect(typeof isError.find((error) => error.key === "name")).toEqual(
         "object"
       );
@@ -52,7 +51,7 @@ describe("Product Repo [Create]", () => {
       stock: 1,
       price: 1,
     });
-    if (isError instanceof Array<Ierrors>) {
+    if (Array.isArray(isError)) {
       expect(typeof isError.find((error) => error.key === "name")).toEqual(
         "object"
       );
@@ -69,7 +68,7 @@ describe("Product Repo [Create]", () => {
       stock: 1,
       price: 1,
     });
-    if (isError instanceof Array<Ierrors>) {
+    if (Array.isArray(isError)) {
       expect(typeof isError.find((error) => error.key === "bar_code")).toEqual(
         "object"
       );
@@ -86,7 +85,7 @@ describe("Product Repo [Create]", () => {
       stock: -1,
       price: 1,
     });
-    if (isError instanceof Array<Ierrors>) {
+    if (Array.isArray(isError)) {
       expect(typeof isError.find((error) => error.key === "stock")).toEqual(
         "object"
       );
@@ -103,7 +102,7 @@ describe("Product Repo [Create]", () => {
       stock: 1,
       price: -2,
     });
-    if (isError instanceof Array<Ierrors>) {
+    if (Array.isArray(isError)) {
       expect(typeof isError.find((error) => error.key === "price")).toEqual(
         "object"
       );
@@ -120,7 +119,7 @@ describe("Product Repo [Create]", () => {
       stock: 10,
       price: 1000,
     });
-    if (isCreated instanceof Array<Ierrors> === false) {
+    if (!Array.isArray(isCreated)) {
       const product = isCreated as TProduct;
       expect(product.bar_code).toEqual("01010101");
       expect(product.discount_percentage).toEqual(0);

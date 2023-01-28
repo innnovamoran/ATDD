@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import express, { Express, Request } from "express";
+import express, { Express } from "express";
 import { graphqlHTTP } from "express-graphql";
 import { buildSchema } from "type-graphql";
 import { Resolvers } from "./Resolver";
@@ -28,6 +28,11 @@ export default class ServerExpress {
           validate: { always: true },
         }),
         graphiql: process.env.NODE_ENV === "develop",
+        customFormatErrorFn: (error) => {
+          console.log(error);
+
+          return error;
+        },
       })
     );
     this.app.use(helmet());

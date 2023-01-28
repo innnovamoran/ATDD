@@ -7,6 +7,7 @@ export class ErrorMongoose {
     description: "Propiedad que contiene errores",
   })
   key!: String;
+
   @Field((type) => String, {
     nullable: true,
     description: "Mensaje de error",

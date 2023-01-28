@@ -8,28 +8,14 @@ describe("Product Resolver", () => {
   afterAll(async () => await db.end_mock_db());
 
   it("Should Be create a product", async () => {
-    const gql = `mutation AddNewProduct($data:RegiserInput!){
-        addNewProduct(data:$data){
-            name,
-            stock,
-            bar_code,
-            discount_percentage,
-            price
-        }
-    }`;
+    const gql = `mutation {
+      addNewProduct
+    }
+    `;
     const response = await gCall({
       source: gql,
-      variableValues: {
-        data: {
-          bar_code: "01010101",
-          discount_percentage: 0,
-          name: "product",
-          stock: 10,
-          price: 1000,
-        },
-      },
     });
-    console.log(response);
-    expect(true).toBeTruthy();
+    console.log(response.data?.addNewProduct);
+    expect(response.data?.addNewProduct).toEqual("hola");
   });
 });

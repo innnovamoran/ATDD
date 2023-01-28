@@ -30,6 +30,7 @@ process.on("exit", (codigo) => {
     case 1:
       LOG_ERROR({ function_name: "INIT-SERVER", message: "PORT NOT DEFINED" });
       break;
+    // @ts-ignore
     case 95:
       LOG_ERROR({
         function_name: "INIT-SERVER",

@@ -1,15 +1,20 @@
-import { Arg, Args, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { ErrorMongoose } from "../../../Core/GraphSchemas/ErrorMongoose";
-import { ProductGraphSchema } from "../../../Core/GraphSchemas/Product";
-import { ProductArgs } from "../../../Core/GraphSchemas/Product/Args";
-import { CreateProduct } from "../../../Core/Repositories/Product/index";
+import { Mutation, Query, Resolver } from "type-graphql";
 @Resolver()
 export class ProductResolver {
-  @Mutation((returns) => ProductGraphSchema || ErrorMongoose, {
+  @Query(() => String)
+  test() {
+    return "hola";
+  }
+
+  @Mutation(() => String, {
     name: "addNewProduct",
     description: "Create new product to store",
   })
-  async addNewProduct(@Args() args: ProductArgs) {
-    return await CreateProduct(args);
+  addNewProduct() {
+    /*     console.log(args);
+    const data = await CreateProduct(args);
+    console.log(data); */
+
+    return "hola";
   }
 }

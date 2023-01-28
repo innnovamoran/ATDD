@@ -1,17 +1,17 @@
-import { graphql } from "graphql";
-import { NonEmptyArray, buildSchema } from "type-graphql";
+import "reflect-metadata";
 
+import { graphql } from "graphql";
+import { buildSchema } from "type-graphql";
+import { Resolvers } from "../../src/Server/Resolver";
 interface Options {
   source: string;
-  variableValues: any;
 }
 
-export const gCall = async ({ source, variableValues }: Options) => {
+export const gCall = async ({ source }: Options) => {
   return graphql({
     schema: await buildSchema({
-      resolvers: [__dirname + "/src/Server/Resolver/**/*.ts"],
+      resolvers: Resolvers,
     }),
     source,
-    variableValues,
   });
 };
