@@ -29,7 +29,7 @@ export default class ServerExpress {
         }),
         graphiql: process.env.NODE_ENV === "develop",
         customFormatErrorFn: (error) => {
-          console.log(error);
+          console.log("customFormatErrorFn", error.originalError);
 
           return error;
         },

@@ -1,20 +1,19 @@
-import { Mutation, Query, Resolver } from "type-graphql";
+import { ProductInput } from "../../../Core/GraphSchemas/Product/Input";
+import { Mutation, Query, Resolver, Arg } from "type-graphql";
+import { ProductGraphSchema } from "../../../Core/GraphSchemas/Product";
+import { CreateProduct } from "../../../Core/Repositories/Product";
 @Resolver()
 export class ProductResolver {
-  @Query(() => String)
+  @Query((returns) => String)
   test() {
     return "hola";
   }
 
-  @Mutation(() => String, {
+  @Mutation((returns) => ProductGraphSchema, {
     name: "addNewProduct",
     description: "Create new product to store",
   })
-  addNewProduct() {
-    /*     console.log(args);
-    const data = await CreateProduct(args);
-    console.log(data); */
-
-    return "hola";
+  async addNewProduct(@Arg("ProductInput") data: ProductInput) {
+    return await CreateProduct(data);
   }
 }

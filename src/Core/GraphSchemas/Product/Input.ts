@@ -1,26 +1,18 @@
-import { ObjectType, Field, Int, ID } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 
-@ObjectType({ description: "Product" })
-export class ProductGraphSchema {
-  @Field((type) => ID, {
-    nullable: true,
-    description: "ID product",
-  })
-  _id!: string;
+@InputType("ProductInput")
+export class ProductInput {
   @Field((type) => String, {
-    nullable: true,
     description: "Name product",
   })
   name!: string;
 
   @Field((type) => Int, {
-    nullable: true,
     description: "Stock available",
   })
   stock!: number;
 
   @Field((type) => String, {
-    nullable: true,
     description: "Bar Code product",
   })
   bar_code!: string;
@@ -32,7 +24,6 @@ export class ProductGraphSchema {
   discount_percentage!: number;
 
   @Field((type) => Int, {
-    nullable: true,
     description: "Price product",
   })
   price!: number;
