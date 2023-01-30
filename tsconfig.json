@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
@@ -23,9 +26,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "rootDir": "src"
+    "baseUrl": "./src/",
+    "rootDir": ".",
+    "paths": {
+      "@repositories/*": ["Core/Repositories/*"],
+      "@helpers/*": ["Helper/*"],
+      "@core/*": ["Core/*"],
+      "@server/*": ["Server/*"]
+    }
   },
-  "exclude": ["node_modules", "./test/**/*.spec.ts", "./test/**/*.test.ts"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "exclude": ["node_modules", "test/**/*.test.ts"],
+  "include": ["./src/**/*.tsx", "./src/**/*.ts", "test/**/*.spec.ts"]
 }

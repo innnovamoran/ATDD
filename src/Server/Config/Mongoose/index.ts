@@ -18,6 +18,10 @@ export default class MongooseDB {
     try {
       await connect(`${process.env.DB_HOST}/${process.env.DB_NAME}`, {
         appName: "shoping_car_graphql",
+        bufferCommands: false,
+        user: "root",
+        pass: "admin123",
+        authSource: "admin",
       });
       console.log("[DB-CONNECT-START]");
     } catch (error) {

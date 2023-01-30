@@ -1,11 +1,11 @@
 import HandleErrorsMongose, {
   ErrorFromMongoose,
-  Ierrors,
+  Ierror,
 } from "../../../Helper/HandleErrorMongoose";
 
-import ProductSchema, { TProduct } from "./ProductSchema";
+import ProductSchema, { TProduct } from "./Entity";
 
-export type ProductRepoResponse = Promise<Ierrors[] | TProduct>;
+export type ProductRepoResponse = Promise<Ierror[] | TProduct>;
 
 export const CreateProduct = async (product: TProduct): ProductRepoResponse => {
   try {

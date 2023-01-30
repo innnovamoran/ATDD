@@ -1,6 +1,6 @@
 import MongooseDB from "../../src/Server/Config/Mongoose";
 import { CreateProduct } from "../../src/Core/Repositories/Product";
-import { TProduct } from "../../src/Core/Repositories/Product/ProductSchema";
+import { TProduct } from "../../src/Core/Repositories/Product/Entity";
 
 const db = new MongooseDB();
 describe("Product Repo [Create]", () => {
