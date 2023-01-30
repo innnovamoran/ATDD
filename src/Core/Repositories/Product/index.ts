@@ -1,7 +1,7 @@
 import HandleErrorsMongose, {
   ErrorFromMongoose,
   Ierror,
-} from "../../../Helper/HandleErrorMongoose";
+} from "@helpers/HandleErrorMongoose";
 
 import ProductSchema, { TProduct } from "./Entity";
 

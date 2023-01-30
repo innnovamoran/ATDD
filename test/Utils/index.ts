@@ -2,7 +2,7 @@ import "reflect-metadata";
 
 import { graphql } from "graphql";
 import { buildSchema, Maybe } from "type-graphql";
-import { Resolvers } from "../../src/Server/Resolver";
+import { Resolvers } from "@server/Resolver";
 interface Options {
   source: string;
   variableValues: Maybe<{

@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import MongooseDB from "../../src/Server/Config/Mongoose";
+import MongooseDB from "@server/Config/Mongoose";
 import { gCall } from "../Utils";
 import { gql_add_product } from "../Utils/querys";
 const db = new MongooseDB();

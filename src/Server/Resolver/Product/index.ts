@@ -1,8 +1,8 @@
 import { Mutation, Query, Resolver, Arg, createUnionType } from "type-graphql";
-import { ProductInput } from "../../../Core/Repositories/Product/Input";
-import { ProductGraphSchema } from "../../../Core/Repositories/Product/Schema";
-import { CreateProduct } from "../../../Core/Repositories/Product";
-import { MongooseErrorSchema } from "../../../Core/ErrorMongoose";
+import { ProductInput } from "@repositories/Product/Input";
+import { ProductGraphSchema } from "@repositories/Product/Schema";
+import { CreateProduct } from "@repositories/Product";
+import { MongooseErrorSchema } from "@core/ErrorMongoose";
 
 const ProductResponse = createUnionType({
   name: "ProductResponse",
