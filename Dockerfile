@@ -4,7 +4,7 @@ WORKDIR /app
 RUN npm i typescript -g
 COPY . .
 
-RUN npm i --legacy-peer-deps
+RUN npm i
 RUN npm run esbuild:prod
 
 # Empaquetas la APP (Aquí queda la aplicacion para desplegarla)
@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=build /app* ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/bundle ./bundle
-COPY --from=build /app/src/Server/Config/Sequelize ./Config
+COPY --from=build /app/src/Server/Config/Mongoose ./Config
 
 RUN rm -rf ./src
 
